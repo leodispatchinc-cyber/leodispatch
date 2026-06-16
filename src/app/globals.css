@@ -1,0 +1,234 @@
+@import "tailwindcss";
+
+/* ============================================================
+   LEO DISPATCH — Brand System
+   Black authority + Yellow/Gold highway energy
+   ============================================================ */
+@theme {
+  --color-ink: #000000;
+  --color-surface: #0a0a0a;
+  --color-surface-2: #111111;
+  --color-yellow: #ffd000;
+  --color-gold: #f4b400;
+  --color-paper: #ffffff;
+  --color-muted: #a1a1aa;
+  --color-line: #262626;
+  --color-success: #16a34a;
+
+  --font-sans: var(--font-inter), system-ui, -apple-system, sans-serif;
+  --font-display: var(--font-archivo), var(--font-inter), sans-serif;
+
+  --shadow-glow: 0 0 60px -12px rgba(255, 208, 0, 0.45);
+}
+
+* {
+  border-color: var(--color-line);
+}
+
+html {
+  scroll-behavior: smooth;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+body {
+  background: var(--color-ink);
+  color: var(--color-paper);
+  font-family: var(--font-sans);
+  /* `clip` (not `hidden`) prevents horizontal overflow WITHOUT creating a
+     scroll container — `hidden` would break `position: sticky` stacking. */
+  overflow-x: clip;
+}
+
+/* Lenis smooth scroll */
+html.lenis,
+html.lenis body {
+  height: auto;
+}
+.lenis.lenis-smooth {
+  scroll-behavior: auto !important;
+}
+.lenis.lenis-stopped {
+  overflow: hidden;
+}
+
+/* Selection */
+::selection {
+  background: var(--color-yellow);
+  color: #000;
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 10px;
+}
+::-webkit-scrollbar-track {
+  background: #000;
+}
+::-webkit-scrollbar-thumb {
+  background: #262626;
+  border-radius: 8px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--color-gold);
+}
+
+/* ── Reusable utilities ───────────────────────────────────── */
+@layer utilities {
+  .container-x {
+    width: 100%;
+    max-width: 80rem;
+    margin-inline: auto;
+    padding-inline: 1.5rem;
+  }
+
+  .text-gradient-gold {
+    background: linear-gradient(135deg, #ffd000 0%, #f4b400 55%, #b8860b 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+
+  .bg-grid {
+    background-image: linear-gradient(rgba(38, 38, 38, 0.35) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(38, 38, 38, 0.35) 1px, transparent 1px);
+    background-size: 56px 56px;
+  }
+
+  .ring-gold {
+    box-shadow: 0 0 0 1px rgba(244, 180, 0, 0.25), 0 0 40px -10px rgba(255, 208, 0, 0.35);
+  }
+
+  /* Infinite marquee */
+  .animate-marquee {
+    animation: marquee 32s linear infinite;
+  }
+  .animate-marquee-rev {
+    animation: marquee 38s linear infinite reverse;
+  }
+}
+
+/* ── Form controls (shared by onboarding + contact forms) ──── */
+.input,
+.field-input {
+  width: 100%;
+  border-radius: 0.75rem;
+  border: 1px solid var(--color-line);
+  background: #000;
+  padding: 0.75rem 1rem;
+  font-size: 0.9rem;
+  color: #fff;
+  outline: none;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+.input::placeholder,
+.field-input::placeholder {
+  color: #6b6b73;
+}
+.input:focus,
+.field-input:focus {
+  border-color: var(--color-gold);
+  box-shadow: 0 0 0 3px rgba(244, 180, 0, 0.12);
+}
+.field-input[type="file"] {
+  padding: 0.6rem 0.75rem;
+  font-size: 0.82rem;
+  color: var(--color-muted);
+  cursor: pointer;
+}
+.field-input[type="file"]::file-selector-button {
+  margin-right: 0.75rem;
+  border: 0;
+  border-radius: 0.5rem;
+  background: var(--color-surface-2);
+  color: var(--color-paper);
+  padding: 0.4rem 0.8rem;
+  font-size: 0.8rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+.field-input[type="file"]::file-selector-button:hover {
+  background: var(--color-line);
+}
+
+@keyframes marquee {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+/* Neon graffiti brand text (hero) */
+.neon-brand {
+  color: #ffd400;
+  text-shadow:
+    0 0 6px rgba(255, 224, 110, 0.95),
+    0 0 18px rgba(255, 208, 0, 0.85),
+    0 0 40px rgba(244, 180, 0, 0.6),
+    0 0 90px rgba(244, 180, 0, 0.45),
+    0 0 140px rgba(244, 180, 0, 0.3);
+}
+.neon-stroke {
+  -webkit-text-stroke: 1.5px rgba(255, 224, 120, 0.55);
+}
+
+/* Ambient spotlight beam (Aceternity-style) */
+@keyframes spotlight {
+  0% {
+    opacity: 0;
+    transform: translate(-72%, -62%) scale(0.5);
+  }
+  100% {
+    opacity: 1;
+    transform: translate(-50%, -40%) scale(1);
+  }
+}
+.animate-spotlight {
+  animation: spotlight 2.2s ease 0.4s 1 forwards;
+}
+
+/* Rotating sunburst rays behind the hero stage */
+@keyframes spin-slow {
+  to {
+    transform: rotate(360deg);
+  }
+}
+.sunburst {
+  background: repeating-conic-gradient(
+    from 0deg,
+    rgba(255, 208, 0, 0.14) 0deg 3deg,
+    transparent 3deg 11deg
+  );
+  -webkit-mask-image: radial-gradient(circle, #000 0%, transparent 62%);
+  mask-image: radial-gradient(circle, #000 0%, transparent 62%);
+  animation: spin-slow 60s linear infinite;
+}
+
+/* Road dashes moving toward the viewer (hero) */
+@keyframes road-dash {
+  from {
+    background-position-y: 0;
+  }
+  to {
+    background-position-y: 120px;
+  }
+}
+
+/* Dash flow along freight lanes (map) */
+@keyframes lane-flow {
+  to {
+    stroke-dashoffset: -1000;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+  }
+}

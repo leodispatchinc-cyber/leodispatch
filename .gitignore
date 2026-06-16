@@ -1,0 +1,20 @@
+/node_modules
+/.next
+/out
+/build
+.DS_Store
+*.pem
+npm-debug.log*
+.env*.local
+.vercel
+*.tsbuildinfo
+next-env.d.ts
+
+# local file-based submission store + uploaded documents
+/.data
+
+# MCP config — contains a local API key, must not be published
+.mcp.json
+
+# dev server logs
+*.log
