@@ -11,7 +11,6 @@ import {
   Snowflake,
   LayoutGrid,
   Zap,
-  Bus,
   Layers,
   DollarSign,
   UserCheck,
@@ -60,7 +59,6 @@ export const truckTypes: { name: string; icon: LucideIcon; blurb: string }[] = [
   { name: "Reefer", icon: Snowflake, blurb: "Temperature-controlled. Premium produce & food loads." },
   { name: "Flatbed", icon: LayoutGrid, blurb: "Steel, lumber, machinery. Strong rates year-round." },
   { name: "Power Only", icon: Truck, blurb: "Pull pre-loaded trailers. Drop and hook efficiency." },
-  { name: "Sprinter Van", icon: Bus, blurb: "Expedited & cargo van loads. First-in, first-out." },
   { name: "Step Deck", icon: Layers, blurb: "Tall & oversized freight the flatbed can't handle." },
 ];
 
@@ -122,7 +120,7 @@ export const dispatchServices = [
 export const faqs = [
   { q: "How much do you charge?", a: "We charge a flat percentage of the line haul — no hidden fees, no sign-up cost. You only pay when we book you a load." },
   { q: "Do you work with new MCs?", a: "Yes. Our New Authority Program is built specifically for carriers with an MC under 90 days, including factoring setup and broker onboarding." },
-  { q: "Do you dispatch box trucks?", a: "Absolutely. Box trucks, Sprinter vans, hotshots, dry vans, reefers, flatbeds, step decks and power-only — we cover them all." },
+  { q: "Do you dispatch box trucks?", a: "Absolutely. Box trucks, hotshots, dry vans, reefers, flatbeds, step decks and power-only — we cover them all." },
   { q: "Do you provide hotshot loads?", a: "Yes. Hotshot is one of our highest-volume equipment types, with dedicated lanes and high-RPM freight." },
   { q: "Can I reject loads?", a: "Always. We never force-dispatch. Every load is your decision — we only book what you approve." },
   { q: "How quickly can I start?", a: "Most carriers are onboarded and booking their first load within 24 hours of uploading documents." },
