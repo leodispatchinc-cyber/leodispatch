@@ -62,7 +62,7 @@ export function fullAddress(a: Address) {
 
 /* ── Move Em Out — standard owner-operator document set ──────── */
 const MOVE_EM_OUT_DOCS: RequiredDoc[] = [
-  { key: "drivers_license", label: "Driver's License", help: "Clear, readable copy of the driver's license (front).", required: true },
+  { key: "drivers_license", label: "Copy of Driver's License", help: "Clear, readable copy of the driver's license (front).", required: true },
   { key: "coi", label: "Certificate of Insurance (COI)", help: "Must list the company below as the certificate holder.", required: true },
   { key: "medical_certificate", label: "Driver Medical Certificate", help: "Current DOT medical examiner's certificate.", required: true },
   { key: "dot_inspection", label: "Latest DOT Truck Inspection Report", help: "Your most recent annual DOT inspection.", required: true },
@@ -70,8 +70,8 @@ const MOVE_EM_OUT_DOCS: RequiredDoc[] = [
   { key: "lease_agreement", label: "Lease Agreement", help: "Signed equipment / owner-operator lease agreement.", required: true },
 ];
 
-/* ── Tulare Trucking — document set ──────────────────────────────── */
-const TULARE_TRUCKING_DOCS: RequiredDoc[] = [
+/* ── Base Cargo — document set ──────────────────────────────── */
+const BASE_CARGO_DOCS: RequiredDoc[] = [
   {
     key: "coi",
     label: "Certificate of Insurance (COI)",
@@ -81,11 +81,11 @@ const TULARE_TRUCKING_DOCS: RequiredDoc[] = [
     instructions: [
       "$1,000,000 liability limit",
       "$100,000 cargo limit",
-      "Add TULARE TRUCKING LLC as Certificate Holder AND Additional Insured",
+      "Add BASE CARGO LLC as Certificate Holder AND Additional Insured",
       "Email the certificate to baseintcargo@gmail.com",
     ],
   },
-  { key: "drivers_license", label: "Driver's License", help: "Clear, readable copy of the driver's license (front).", required: true },
+  { key: "drivers_license", label: "Copy of Driver's License", help: "Clear, readable copy of the driver's license (front).", required: true },
   { key: "void_check", label: "VOID Check", help: "A voided check — this is your bank info we'll use for payment.", required: true },
   {
     key: "truck_pictures",
@@ -115,27 +115,27 @@ export const mcCompanies: McCompany[] = [
     documents: MOVE_EM_OUT_DOCS,
   },
   {
-    slug: "tulare-trucking-llc",
-    name: "Tulare Trucking LLC",
-    legalName: "TULARE TRUCKING LLC",
+    slug: "base-cargo-llc",
+    name: "Base Cargo LLC",
+    legalName: "BASE CARGO LLC",
     authorityType: "MC Authority",
     status: "active",
     email: "baseintcargo@gmail.com",
     address: { line1: "5908 Lawn Ave", city: "Cleveland", state: "OH", zip: "44102" },
-    tagline: "Lease onto Tulare Trucking and get paid every Monday — submit your documents below to get started.",
+    tagline: "Lease onto Base Cargo and get paid every Monday — submit your documents below to get started.",
     payTerms: "Payment every Monday — 10%",
-    coiHolder: { name: "TULARE TRUCKING LLC", line1: "5908 Lawn Ave", city: "Cleveland", state: "OH", zip: "44102" },
+    coiHolder: { name: "BASE CARGO LLC", line1: "5908 Lawn Ave", city: "Cleveland", state: "OH", zip: "44102" },
     coiRequirements: [
       "$1,000,000 liability limit",
       "$100,000 cargo limit",
-      "List TULARE TRUCKING LLC as Certificate Holder AND Additional Insured",
+      "List BASE CARGO LLC as Certificate Holder AND Additional Insured",
       "Email the signed certificate to baseintcargo@gmail.com",
     ],
     collectTruck: false,
     collectTruckDimensions: true,
     collectEld: false,
     collectBanking: false,
-    documents: TULARE_TRUCKING_DOCS,
+    documents: BASE_CARGO_DOCS,
   },
   {
     slug: "silver-arrow-logistics-llc",

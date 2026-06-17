@@ -101,6 +101,9 @@ export default async function RequirementsPage({
                   <div className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wide text-gold">
                     <ShieldCheck className="h-4 w-4" /> Certificate of Insurance — Holder
                   </div>
+                  <p className="mt-3 text-sm text-paper/85">
+                    Please send your COI (Certificate of Insurance) listing the certificate holder as:
+                  </p>
                   <div className="mt-2 text-sm">
                     <div className="font-display text-lg font-bold text-paper">{c.coiHolder.name}</div>
                     <div className="text-muted">
