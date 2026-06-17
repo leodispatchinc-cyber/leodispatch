@@ -17,7 +17,7 @@ function normalize(input: PostInput): Omit<BlogPost, "id" | "createdAt" | "updat
     excerpt,
     body: input.body,
     coverImage: input.coverImage.trim(),
-    author: input.author.trim() || "Leo Dispatch Team",
+    author: input.author.trim() || "Leo Dispatch Inc Team",
     status: input.status === "published" ? "published" : "draft",
     featured: !!input.featured,
     publishedAt: (input.publishedAt || todayISO()).slice(0, 10),

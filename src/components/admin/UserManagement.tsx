@@ -35,7 +35,7 @@ const allAuthorities = mcCompanies.map((c) => c.name).join(", ");
 const TEAM = [
   {
     name: "Leo",
-    email: "admin@leodispatch.com",
+    email: "admin@leodispatchinc.com",
     role: "Super Admin",
     authorities: allAuthorities,
     initials: "L",
@@ -43,7 +43,7 @@ const TEAM = [
   },
   {
     name: "Dispatch Desk",
-    email: "dispatch@leodispatch.com",
+    email: "dispatch@leodispatchinc.com",
     role: "Dispatcher",
     authorities: [mcCompanies[0]?.name, mcCompanies[2]?.name].filter(Boolean).join(", "),
     initials: "DD",
@@ -51,7 +51,7 @@ const TEAM = [
   },
   {
     name: "Docs Team",
-    email: "docs@leodispatch.com",
+    email: "docs@leodispatchinc.com",
     role: "Document Verifier",
     authorities: mcCompanies[1]?.name ?? "—",
     initials: "DT",

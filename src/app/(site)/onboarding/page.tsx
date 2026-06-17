@@ -5,7 +5,7 @@ import PageHeader from "@/components/ui/PageHeader";
 import { mcCompanies, fullAddress } from "@/lib/companies";
 
 export const metadata: Metadata = {
-  title: "Carrier Onboarding — Leo Dispatch",
+  title: "Carrier Onboarding — Leo Dispatch Inc",
   description:
     "Choose your MC authority and complete onboarding online. Upload your documents once and start booking loads fast.",
 };

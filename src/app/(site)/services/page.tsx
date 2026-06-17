@@ -10,7 +10,7 @@ import FAQ from "@/components/sections/FAQ";
 import ContactCTA from "@/components/sections/ContactCTA";
 
 export const metadata: Metadata = {
-  title: "Dispatch Services — Leo Dispatch",
+  title: "Dispatch Services — Leo Dispatch Inc",
   description:
     "Full-service truck dispatch: load booking, rate negotiation, broker setup, paperwork, factoring and 24/7 support across 48 states.",
 };

@@ -70,8 +70,8 @@ const MOVE_EM_OUT_DOCS: RequiredDoc[] = [
   { key: "lease_agreement", label: "Lease Agreement", help: "Signed equipment / owner-operator lease agreement.", required: true },
 ];
 
-/* ── Base Cargo — document set ──────────────────────────────── */
-const BASE_CARGO_DOCS: RequiredDoc[] = [
+/* ── Tulare Trucking — document set ──────────────────────────────── */
+const TULARE_TRUCKING_DOCS: RequiredDoc[] = [
   {
     key: "coi",
     label: "Certificate of Insurance (COI)",
@@ -81,7 +81,7 @@ const BASE_CARGO_DOCS: RequiredDoc[] = [
     instructions: [
       "$1,000,000 liability limit",
       "$100,000 cargo limit",
-      "Add BASE CARGO LLC as Certificate Holder AND Additional Insured",
+      "Add TULARE TRUCKING LLC as Certificate Holder AND Additional Insured",
       "Email the certificate to baseintcargo@gmail.com",
     ],
   },
@@ -115,27 +115,27 @@ export const mcCompanies: McCompany[] = [
     documents: MOVE_EM_OUT_DOCS,
   },
   {
-    slug: "base-cargo-llc",
-    name: "Base Cargo LLC",
-    legalName: "BASE CARGO LLC",
+    slug: "tulare-trucking-llc",
+    name: "Tulare Trucking LLC",
+    legalName: "TULARE TRUCKING LLC",
     authorityType: "MC Authority",
     status: "active",
     email: "baseintcargo@gmail.com",
     address: { line1: "5908 Lawn Ave", city: "Cleveland", state: "OH", zip: "44102" },
-    tagline: "Lease onto Base Cargo and get paid every Monday — submit your documents below to get started.",
+    tagline: "Lease onto Tulare Trucking and get paid every Monday — submit your documents below to get started.",
     payTerms: "Payment every Monday — 10%",
-    coiHolder: { name: "BASE CARGO LLC", line1: "5908 Lawn Ave", city: "Cleveland", state: "OH", zip: "44102" },
+    coiHolder: { name: "TULARE TRUCKING LLC", line1: "5908 Lawn Ave", city: "Cleveland", state: "OH", zip: "44102" },
     coiRequirements: [
       "$1,000,000 liability limit",
       "$100,000 cargo limit",
-      "List BASE CARGO LLC as Certificate Holder AND Additional Insured",
+      "List TULARE TRUCKING LLC as Certificate Holder AND Additional Insured",
       "Email the signed certificate to baseintcargo@gmail.com",
     ],
     collectTruck: false,
     collectTruckDimensions: true,
     collectEld: false,
     collectBanking: false,
-    documents: BASE_CARGO_DOCS,
+    documents: TULARE_TRUCKING_DOCS,
   },
   {
     slug: "silver-arrow-logistics-llc",

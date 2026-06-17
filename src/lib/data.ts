@@ -138,11 +138,11 @@ export const recruitmentRoles = [
 
 /* ── Site config (company contact details) ────────────────── */
 export const site = {
-  name: "Leo Dispatch",
+  name: "Leo Dispatch Inc",
   tagline: "We find the loads. You drive.",
-  phone: "(555) 010-2030",
-  phoneHref: "tel:+15550102030",
-  email: "dispatch@leodispatch.com",
+  phone: "(360) 524-3663",
+  phoneHref: "tel:+13605243663",
+  email: "leodispatchinc@gmail.com",
   hours: "Mon–Sun · 24/7 Dispatch",
   location: "United States · 48 States",
 };

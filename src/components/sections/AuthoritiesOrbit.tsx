@@ -7,7 +7,7 @@ import { mcCompanies } from "@/lib/companies";
 
 const iconBySlug: Record<string, React.ElementType> = {
   "move-em-out-llc": Truck,
-  "base-cargo-llc": Boxes,
+  "tulare-trucking-llc": Boxes,
   "silver-arrow-logistics-llc": Building2,
 };
 

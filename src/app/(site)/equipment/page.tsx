@@ -7,7 +7,7 @@ import RevenueCalculator from "@/components/sections/RevenueCalculator";
 import ContactCTA from "@/components/sections/ContactCTA";
 
 export const metadata: Metadata = {
-  title: "Equipment We Dispatch — Leo Dispatch",
+  title: "Equipment We Dispatch — Leo Dispatch Inc",
   description:
     "We dispatch hotshots, box trucks, dry vans, reefers, flatbeds, power only, sprinter vans and step decks across all 48 states.",
 };

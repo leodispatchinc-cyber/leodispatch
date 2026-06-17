@@ -247,7 +247,7 @@ export default function HeroTruckAnimation() {
   return (
     <section
       ref={root}
-      aria-label="Leo Dispatch — keep your truck moving"
+      aria-label="Leo Dispatch Inc — keep your truck moving"
       className="relative isolate h-screen w-full overflow-hidden bg-black"
     >
       {/* ── Background — living loop video, softly blurred (depth of field)

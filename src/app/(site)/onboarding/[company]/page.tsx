@@ -19,7 +19,7 @@ export async function generateMetadata({
   const { company } = await params;
   const c = getCompany(company);
   return {
-    title: c ? `${c.name} — Carrier Onboarding | Leo Dispatch` : "Carrier Onboarding — Leo Dispatch",
+    title: c ? `${c.name} — Carrier Onboarding | Leo Dispatch Inc` : "Carrier Onboarding — Leo Dispatch Inc",
     description: c?.tagline,
   };
 }

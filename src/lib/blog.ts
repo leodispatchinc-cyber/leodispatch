@@ -135,7 +135,7 @@ export function emptyPostInput(): PostInput {
     excerpt: "",
     body: "",
     coverImage: "",
-    author: "Leo Dispatch Team",
+    author: "Leo Dispatch Inc Team",
     status: "draft",
     featured: false,
     publishedAt: "",
@@ -160,7 +160,7 @@ export const seedPosts: SeedPost[] = [
       "Everything a new owner operator needs to file, insure and activate their MC authority the right way.",
     coverImage:
       "https://images.unsplash.com/photo-1601584115197-04ecc0da31d7?auto=format&fit=crop&w=1600&q=70",
-    author: "Leo Dispatch Team",
+    author: "Leo Dispatch Inc Team",
     status: "published",
     featured: true,
     publishedAt: "2025-06-06",
@@ -189,7 +189,7 @@ export const seedPosts: SeedPost[] = [
     excerpt: "We break down RPM, fuel, and insurance so you know exactly what a hotshot rig nets per week.",
     coverImage:
       "https://images.unsplash.com/photo-1591768793355-74d04bb6608f?auto=format&fit=crop&w=1600&q=70",
-    author: "Leo Dispatch Team",
+    author: "Leo Dispatch Inc Team",
     status: "published",
     featured: false,
     publishedAt: "2025-06-04",
@@ -219,7 +219,7 @@ export const seedPosts: SeedPost[] = [
       "From DOT registration to your first booked load — the lean path to a profitable box truck operation.",
     coverImage:
       "https://images.unsplash.com/photo-1586191582151-f73872dfd183?auto=format&fit=crop&w=1600&q=70",
-    author: "Leo Dispatch Team",
+    author: "Leo Dispatch Inc Team",
     status: "published",
     featured: false,
     publishedAt: "2025-06-02",
@@ -246,7 +246,7 @@ export const seedPosts: SeedPost[] = [
       "DAT vs Truckstop vs direct broker relationships — where the high-paying freight actually lives.",
     coverImage:
       "https://images.unsplash.com/photo-1566576721346-d4a3b4eaeb55?auto=format&fit=crop&w=1600&q=70",
-    author: "Leo Dispatch Team",
+    author: "Leo Dispatch Inc Team",
     status: "published",
     featured: false,
     publishedAt: "2025-05-30",

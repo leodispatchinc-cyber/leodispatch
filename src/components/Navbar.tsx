@@ -37,13 +37,13 @@ export default function Navbar() {
       className={cn(
         "fixed inset-x-0 top-0 z-50 transition-colors duration-300",
         solid
-          ? "border-b border-white/10 bg-black/75 backdrop-blur-xl"
-          : "border-b border-transparent bg-transparent"
+          ? "bg-gradient-to-b from-black/90 via-black/55 to-transparent"
+          : "bg-transparent"
       )}
     >
       {/* centred logo + links row beneath — Porsche-style, fully transparent */}
       <div className="container-x relative flex flex-col items-center gap-3 py-4 sm:gap-4 sm:py-5">
-        <Link href="/" aria-label="Leo Dispatch — home" className="flex items-center">
+        <Link href="/" aria-label="Leo Dispatch Inc — home" className="flex items-center">
           <LeoLogo className="h-10 sm:h-12" />
         </Link>
 

@@ -8,7 +8,7 @@ export default function WhyChooseUs() {
   return (
     <section className="container-x py-24 sm:py-32">
       <SectionHeading
-        eyebrow="Why Owner Operators Choose Leo Dispatch"
+        eyebrow="Why Owner Operators Choose Leo Dispatch Inc"
         title={<>Built to make your truck <span className="text-gradient-gold">more profitable</span></>}
         subtitle="The things every owner operator actually wants from a dispatcher — done right."
       />

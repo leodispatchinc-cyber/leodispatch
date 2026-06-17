@@ -238,7 +238,7 @@ export default function BlogEditor({
               </select>
             </Field>
             <Field label="Author">
-              <input className="field-input" value={form.author} onChange={(e) => set("author", e.target.value)} placeholder="Leo Dispatch Team" />
+              <input className="field-input" value={form.author} onChange={(e) => set("author", e.target.value)} placeholder="Leo Dispatch Inc Team" />
             </Field>
           </div>
         </div>

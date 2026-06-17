@@ -52,7 +52,7 @@ export async function notifyLead(subject: string, html: string) {
         Authorization: `Bearer ${apiKey}`,
       },
       body: JSON.stringify({
-        from: "Leo Dispatch <onboarding@leodispatch.com>",
+        from: "Leo Dispatch Inc <onboarding@leodispatchinc.com>",
         to: [to],
         subject,
         html,

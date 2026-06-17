@@ -27,7 +27,7 @@ export async function generateMetadata({
   const { company } = await params;
   const c = getCompany(company);
   return {
-    title: c ? `${c.name} — Document Requirements | Leo Dispatch` : "Document Requirements — Leo Dispatch",
+    title: c ? `${c.name} — Document Requirements | Leo Dispatch Inc` : "Document Requirements — Leo Dispatch Inc",
     description: c ? `Documents and information required to onboard with ${c.name}.` : undefined,
   };
 }

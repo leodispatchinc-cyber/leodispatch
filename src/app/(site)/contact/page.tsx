@@ -5,9 +5,9 @@ import ContactForm from "@/components/ContactForm";
 import { site } from "@/lib/data";
 
 export const metadata: Metadata = {
-  title: "Contact Leo Dispatch — Talk to a Dispatcher 24/7",
+  title: "Contact Leo Dispatch Inc — Talk to a Dispatcher 24/7",
   description:
-    "Get in touch with Leo Dispatch. Call, email or send a message and a dedicated dispatcher will reach out fast.",
+    "Get in touch with Leo Dispatch Inc. Call, email or send a message and a dedicated dispatcher will reach out fast.",
 };
 
 const channels = [

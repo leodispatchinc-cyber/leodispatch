@@ -6,7 +6,7 @@ import Recruitment from "@/components/sections/Recruitment";
 import ContactCTA from "@/components/sections/ContactCTA";
 
 export const metadata: Metadata = {
-  title: "Carriers & MC Authority Programs — Leo Dispatch",
+  title: "Carriers & MC Authority Programs — Leo Dispatch Inc",
   description:
     "Lease your truck onto an established MC authority, upload your documents once, and start booking high-paying loads with dedicated dispatch.",
 };

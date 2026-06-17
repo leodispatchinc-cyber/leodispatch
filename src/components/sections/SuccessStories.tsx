@@ -12,7 +12,7 @@ export default function SuccessStories() {
         <SectionHeading
           eyebrow="Success Stories"
           title={<>Real carriers. <span className="text-gradient-gold">Real revenue.</span></>}
-          subtitle="Owner operators who switched to Leo Dispatch and never looked back."
+          subtitle="Owner operators who switched to Leo Dispatch Inc and never looked back."
         />
       </div>
 

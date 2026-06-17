@@ -8,9 +8,9 @@ import ContactCTA from "@/components/sections/ContactCTA";
 import { heroStats } from "@/lib/data";
 
 export const metadata: Metadata = {
-  title: "About Leo Dispatch — Dispatch Built for Owner-Operators",
+  title: "About Leo Dispatch Inc — Dispatch Built for Owner-Operators",
   description:
-    "Leo Dispatch is a dedicated truck dispatch and owner-operator recruitment company. We find the loads. You drive.",
+    "Leo Dispatch Inc is a dedicated truck dispatch and owner-operator recruitment company. We find the loads. You drive.",
 };
 
 const values = [
@@ -42,7 +42,7 @@ export default function AboutPage() {
       <PageHeader
         eyebrow="Who We Are"
         title={<>We Find The Loads. <span className="text-gradient-gold">You Drive.</span></>}
-        subtitle="Leo Dispatch is a dedicated dispatch and owner-operator recruitment company built to make independent trucking simpler, safer and more profitable."
+        subtitle="Leo Dispatch Inc is a dedicated dispatch and owner-operator recruitment company built to make independent trucking simpler, safer and more profitable."
       />
 
       {/* Story + stats */}
@@ -54,7 +54,7 @@ export default function AboutPage() {
                 Trucking is hard enough. <span className="text-gradient-gold">Dispatch shouldn&apos;t be.</span>
               </h2>
               <p className="leading-relaxed text-muted">
-                We started Leo Dispatch because owner-operators deserve better than call-center
+                We started Leo Dispatch Inc because owner-operators deserve better than call-center
                 roulette and forced dispatch. Our model is simple: one dedicated dispatcher per
                 carrier, relentless rate negotiation, and paperwork handled end-to-end.
               </p>

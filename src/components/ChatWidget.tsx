@@ -167,7 +167,7 @@ export default function ChatWidget() {
                 <span className="absolute -right-0.5 -top-0.5 h-2.5 w-2.5 rounded-full border-2 border-ink bg-success" />
               </span>
               <div>
-                <div className="text-sm font-bold text-paper">Leo Dispatch</div>
+                <div className="text-sm font-bold text-paper">Leo Dispatch Inc</div>
                 <div className="text-[11px] text-success">We typically reply in minutes</div>
               </div>
             </div>

@@ -18,7 +18,7 @@ export default function HowItWorks() {
   return (
     <section id="how-it-works" className="container-x scroll-mt-24 py-24 sm:py-32">
       <SectionHeading
-        eyebrow="How Leo Dispatch Works"
+        eyebrow="How Leo Dispatch Inc Works"
         title={<>From signup to <span className="text-gradient-gold">first load</span> in 24 hours</>}
         subtitle="Four steps. One dedicated dispatcher. Zero paperwork headaches."
       />

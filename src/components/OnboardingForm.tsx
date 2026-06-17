@@ -270,7 +270,7 @@ export default function OnboardingForm({ company }: { company: McCompany }) {
             className="mt-0.5 h-4 w-4 accent-yellow"
           />
           <span>
-            I confirm the information above is accurate and authorize {company.name} and Leo Dispatch
+            I confirm the information above is accurate and authorize {company.name} and Leo Dispatch Inc
             to use it for onboarding, dispatch and compliance.
           </span>
         </label>

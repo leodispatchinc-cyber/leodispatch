@@ -1,9 +1,9 @@
 import { cn } from "@/lib/utils";
 
 /**
- * Leo Dispatch logo — a crisp, infinitely scalable inline SVG mark.
+ * Leo Dispatch Inc logo — a crisp, infinitely scalable inline SVG mark.
  * Balanced horizontal lockup: hanging shipping-container icon on the left,
- * then the heavy "LEO" wordmark with a tracked "DISPATCH" line beneath it.
+ * then the heavy "LEO" wordmark with a tracked "DISPATCH INC" line beneath it.
  * Size it with a height class via `className` (e.g. "h-10").
  *
  *  - variant="default" → gold-on-dark primary mark
@@ -92,10 +92,10 @@ export default function LeoLogo({
 
   return (
     <svg
-      viewBox="0 0 312 116"
+      viewBox="0 0 345 116"
       className={cn("w-auto", className)}
       role="img"
-      aria-label="Leo Dispatch"
+      aria-label="Leo Dispatch Inc"
       style={{ overflow: "visible" }}
     >
       <defs>
@@ -136,17 +136,18 @@ export default function LeoLogo({
         LEO
       </text>
 
-      {/* DISPATCH lockup beneath */}
+      {/* DISPATCH INC lockup beneath — width locked so the tracking stays even */}
       <text
         x={119}
         y={101}
         fontSize={23}
         fontWeight={700}
-        letterSpacing="7.5"
+        textLength={215}
+        lengthAdjust="spacing"
         fill={dispatchFill}
         style={{ fontFamily: "var(--font-display), system-ui, sans-serif" }}
       >
-        DISPATCH
+        DISPATCH INC
       </text>
     </svg>
   );

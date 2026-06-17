@@ -14,7 +14,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   const { slug } = await params;
   const post = await getPostBySlug(slug);
   if (!post || post.status !== "published") {
-    return { title: "Article not found — Leo Dispatch Blog" };
+    return { title: "Article not found — Leo Dispatch Inc Blog" };
   }
   const url = `/blog/${post.slug}`;
   const image = post.ogImage || post.coverImage || undefined;
@@ -30,7 +30,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
       title: post.metaTitle || post.title,
       description: post.metaDescription || post.excerpt,
       url,
-      siteName: "Leo Dispatch",
+      siteName: "Leo Dispatch Inc",
       publishedTime: post.publishedAt,
       modifiedTime: post.updatedAt,
       authors: [post.author],
@@ -69,7 +69,7 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
     author: { "@type": "Organization", name: post.author },
     publisher: {
       "@type": "Organization",
-      name: "Leo Dispatch",
+      name: "Leo Dispatch Inc",
       logo: { "@type": "ImageObject", url: `${SITE_URL}/icon.svg` },
     },
     mainEntityOfPage: { "@type": "WebPage", "@id": `${SITE_URL}/blog/${post.slug}` },

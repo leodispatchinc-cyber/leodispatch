@@ -17,7 +17,7 @@ const archivo = Archivo({
 
 export const metadata: Metadata = {
   metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000"),
-  title: "Leo Dispatch — Keep Your Truck Moving",
+  title: "Leo Dispatch Inc — Keep Your Truck Moving",
   description:
     "Dedicated truck dispatch for Owner Operators, Box Trucks, Hotshots, Dry Vans, Reefers and Small Fleets across the USA. We find the loads. You drive.",
   keywords: [
@@ -29,7 +29,7 @@ export const metadata: Metadata = {
     "freight dispatch USA",
   ],
   openGraph: {
-    title: "Leo Dispatch — Keep Your Truck Moving",
+    title: "Leo Dispatch Inc — Keep Your Truck Moving",
     description: "We find the loads. You drive. 24/7 dedicated dispatch across 48 states.",
     type: "website",
   },

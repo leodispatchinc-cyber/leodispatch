@@ -8,12 +8,12 @@ import PageHeader from "@/components/ui/PageHeader";
 export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {
-  title: "Trucking Blog — Dispatch, MC Authority & Owner-Operator Guides | Leo Dispatch",
+  title: "Trucking Blog — Dispatch, MC Authority & Owner-Operator Guides | Leo Dispatch Inc",
   description:
     "Practical guides for owner operators and small fleets: MC authority, hotshot trucking, box truck business, load boards, factoring, fuel savings and dispatch tips.",
   alternates: { canonical: "/blog" },
   openGraph: {
-    title: "The Leo Dispatch Trucking Blog",
+    title: "The Leo Dispatch Inc Trucking Blog",
     description: "Guides to help owner operators run a more profitable trucking business.",
     type: "website",
   },
@@ -58,7 +58,7 @@ export default async function BlogIndex({
   return (
     <div className="min-h-screen bg-ink">
       <PageHeader
-        eyebrow="Leo Dispatch Blog"
+        eyebrow="Leo Dispatch Inc Blog"
         title={
           <>
             Win the road with <span className="text-gradient-gold">smarter trucking</span>
