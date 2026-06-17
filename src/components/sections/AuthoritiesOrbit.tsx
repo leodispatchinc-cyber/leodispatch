@@ -76,8 +76,8 @@ export default function AuthoritiesOrbit() {
                   </span>
                 </div>
                 <div className="mt-3 flex items-center gap-3">
-                  <span className="grid h-11 w-11 shrink-0 place-items-center rounded-xl border border-gold/30 bg-ink text-gold">
-                    <Icon className="h-5 w-5" />
+                  <span className="grid h-11 w-11 shrink-0 place-items-center rounded-xl bg-gradient-to-br from-[#ffe27a] via-yellow to-gold text-black shadow-md shadow-yellow/25 ring-1 ring-inset ring-white/25">
+                    <Icon className="h-5 w-5" strokeWidth={2.25} />
                   </span>
                   <h3 className="min-w-0 truncate font-display text-lg font-bold text-paper">
                     {c.name.replace(/\s+LLC$/, "")}

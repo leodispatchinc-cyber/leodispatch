@@ -231,13 +231,13 @@ export default function RadialOrbitalTimeline({
                   className={`flex h-12 w-12 items-center justify-center rounded-full border-2 transition-all duration-300
                   ${
                     isExpanded
-                      ? "scale-150 border-gold bg-yellow text-black shadow-lg shadow-yellow/30"
+                      ? "scale-150 border-gold bg-gradient-to-br from-[#ffe27a] via-yellow to-gold text-black shadow-lg shadow-yellow/40"
                       : isRelated
                       ? "animate-pulse border-gold bg-yellow/40 text-black"
                       : "border-white/40 bg-ink text-paper"
                   }`}
                 >
-                  <Icon size={18} />
+                  <Icon size={20} strokeWidth={2.25} />
                 </div>
 
                 {/* label */}
@@ -267,8 +267,8 @@ export default function RadialOrbitalTimeline({
                         </span>
                       </div>
                       <div className="mt-3 flex items-center gap-2.5">
-                        <span className="grid h-10 w-10 shrink-0 place-items-center rounded-xl border border-gold/30 bg-ink text-gold">
-                          <Icon size={18} />
+                        <span className="grid h-10 w-10 shrink-0 place-items-center rounded-xl bg-gradient-to-br from-[#ffe27a] via-yellow to-gold text-black shadow-md shadow-yellow/25 ring-1 ring-inset ring-white/25">
+                          <Icon size={19} strokeWidth={2.25} />
                         </span>
                         <h3 className="min-w-0 truncate font-display text-base font-bold text-paper">
                           {item.title}
