@@ -1,20 +1,44 @@
 "use client";
 
-import { useActionState } from "react";
+import { useState } from "react";
 import Link from "next/link";
 import { Lock } from "lucide-react";
 import LeoLogo from "@/components/LeoLogo";
-import { loginAction, type LoginState } from "./actions";
-
-const initial: LoginState = {};
 
 export default function AdminLoginPage() {
-  const [state, action, pending] = useActionState(loginAction, initial);
+  const [error, setError] = useState("");
+  const [pending, setPending] = useState(false);
+
+  const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    setPending(true);
+    setError("");
+    const fd = new FormData(e.currentTarget);
+    try {
+      const res = await fetch("/api/admin/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          username: fd.get("username"),
+          password: fd.get("password"),
+        }),
+      });
+      const json = await res.json().catch(() => ({}));
+      if (res.ok && json.ok) {
+        window.location.href = "/admin";
+        return;
+      }
+      setError(json.error || "Login failed. Please try again.");
+    } catch {
+      setError("Network error. Please try again.");
+    }
+    setPending(false);
+  };
 
   return (
     <div className="grid min-h-screen place-items-center bg-ink px-4 text-paper">
       <form
-        action={action}
+        onSubmit={onSubmit}
         className="w-full max-w-sm rounded-2xl border border-line bg-surface p-8 shadow-2xl"
       >
         <div className="flex items-center gap-2">
@@ -48,7 +72,7 @@ export default function AdminLoginPage() {
           placeholder="••••••••"
         />
 
-        {state?.error && <p className="mt-3 text-sm text-red-400">{state.error}</p>}
+        {error && <p className="mt-3 text-sm text-red-400">{error}</p>}
 
         <button
           type="submit"

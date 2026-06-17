@@ -1,19 +1,34 @@
 "use client";
 
-import { useActionState } from "react";
+import { useState } from "react";
 import Link from "next/link";
 import { Mail, ArrowLeft } from "lucide-react";
-import { forgotAction, type ForgotState } from "./actions";
 
-const initial: ForgotState = {};
+type State = { ok?: boolean; message?: string; error?: string };
 
 export default function AdminForgotPage() {
-  const [state, action, pending] = useActionState(forgotAction, initial);
+  const [state, setState] = useState<State>({});
+  const [pending, setPending] = useState(false);
+
+  const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    setPending(true);
+    setState({});
+    try {
+      const res = await fetch("/api/admin/forgot", { method: "POST" });
+      const json = await res.json().catch(() => ({}));
+      if (res.ok && json.ok) setState({ ok: true, message: json.message });
+      else setState({ error: json.error || "Could not send the email." });
+    } catch {
+      setState({ error: "Network error. Please try again." });
+    }
+    setPending(false);
+  };
 
   return (
     <div className="grid min-h-screen place-items-center bg-ink px-4 text-paper">
       <form
-        action={action}
+        onSubmit={onSubmit}
         className="w-full max-w-sm rounded-2xl border border-line bg-surface p-8 shadow-2xl"
       >
         <h1 className="flex items-center gap-2 font-display text-2xl font-bold">
@@ -24,13 +39,13 @@ export default function AdminForgotPage() {
           (leodispatchinc@gmail.com).
         </p>
 
-        {state?.ok ? (
+        {state.ok ? (
           <p className="mt-5 rounded-xl border border-success/40 bg-success/10 px-4 py-3 text-sm text-success">
             {state.message}
           </p>
         ) : (
           <>
-            {state?.error && <p className="mt-4 text-sm text-red-400">{state.error}</p>}
+            {state.error && <p className="mt-4 text-sm text-red-400">{state.error}</p>}
             <button
               type="submit"
               disabled={pending}

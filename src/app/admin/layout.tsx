@@ -1,6 +1,6 @@
 import AdminNav from "@/components/admin/AdminNav";
+import LogoutButton from "@/components/admin/LogoutButton";
 import { isAuthenticated } from "@/lib/auth";
-import { logoutAction } from "./login/actions";
 
 export const metadata = {
   title: "Leo Dispatch Inc — Admin",
@@ -28,11 +28,7 @@ export default async function AdminLayout({ children }: { children: React.ReactN
             <span className="grid h-8 w-8 shrink-0 place-items-center rounded-full bg-yellow text-sm font-bold text-black">
               A
             </span>
-            <form action={logoutAction}>
-              <button className="rounded-full border border-line px-3 py-1.5 text-xs font-medium text-muted transition-colors hover:border-gold hover:text-gold">
-                Log out
-              </button>
-            </form>
+            <LogoutButton />
           </header>
           <main className="p-4 sm:p-6 lg:p-8">{children}</main>
         </div>
