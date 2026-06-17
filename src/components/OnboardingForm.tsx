@@ -55,6 +55,7 @@ function Field({
   type = "text",
   placeholder,
   required,
+  optional,
   half,
 }: {
   label: string;
@@ -62,12 +63,14 @@ function Field({
   type?: string;
   placeholder?: string;
   required?: boolean;
+  optional?: boolean;
   half?: boolean;
 }) {
   return (
     <label className={half ? "block" : "block sm:col-span-2"}>
       <span className="mb-1.5 block text-sm font-medium text-muted">
         {label} {required && <span className="text-gold">*</span>}
+        {optional && <span className="font-normal text-muted/60">(optional)</span>}
       </span>
       <input
         name={name}
@@ -177,17 +180,11 @@ export default function OnboardingForm({ company }: { company: McCompany }) {
         <Section
           icon={Cpu}
           title="ELD / Electronic Logging"
-          desc="The DOT-compliant ELD you use, plus the login we'll use to monitor HOS."
+          desc="The DOT-compliant ELD you use. Optional — you can provide it later."
         >
           <div className="grid gap-4 sm:grid-cols-2">
-            <Field label="ELD Company Name" name="eldCompany" placeholder="Motive, Samsara, etc." half />
-            <div className="hidden sm:block" />
-            <Field label="ELD Username" name="eldUsername" placeholder="username" half />
-            <Field label="ELD Password" name="eldPassword" placeholder="••••••••" half />
+            <Field label="ELD Company Name" name="eldCompany" placeholder="Motive, Samsara, etc." optional />
           </div>
-          <p className="mt-3 inline-flex items-center gap-1.5 text-xs text-muted">
-            <Lock className="h-3.5 w-3.5 text-gold" /> Credentials are used only for dispatch &amp; compliance.
-          </p>
         </Section>
       )}
 
@@ -199,7 +196,7 @@ export default function OnboardingForm({ company }: { company: McCompany }) {
             <Field label="Account Holder Name" name="accountName" placeholder="John Carrier" half />
             <Field label="Routing Number" name="routingNumber" placeholder="021000021" half />
             <Field label="Account Number" name="accountNumber" placeholder="000123456789" half />
-            <Field label="Zelle (email or phone)" name="zelle" placeholder="you@email.com or (555) 555-5555" half />
+            <Field label="Zelle (email or phone)" name="zelle" placeholder="you@email.com or (555) 555-5555" optional half />
           </div>
           <p className="mt-3 inline-flex items-center gap-1.5 text-xs text-muted">
             <Lock className="h-3.5 w-3.5 text-gold" /> Banking details are kept private and used for payment only.

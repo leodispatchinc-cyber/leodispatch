@@ -44,7 +44,7 @@ export default async function RequirementsPage({
   const info: string[] = ["Driver full name", "Phone number", "Email", "MC number", "DOT number"];
   if (c.collectTruck) info.push("Truck make, model, year & VIN");
   if (c.collectTruckDimensions) info.push("Truck dimensions (length, width, height, cargo area)");
-  if (c.collectEld) info.push("ELD company name + login (username & password)");
+  if (c.collectEld) info.push("ELD company name (optional)");
   if (c.collectBanking) info.push("Bank account details for pay");
 
   const comingSoon = c.status !== "active";
