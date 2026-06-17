@@ -63,46 +63,62 @@ export default function AuthoritiesOrbit() {
           return (
             <div
               key={c.slug}
-              className="rounded-2xl border border-line bg-surface p-5 transition-colors hover:border-gold/40"
+              className="overflow-hidden rounded-2xl border border-line bg-surface transition-colors hover:border-gold/40"
             >
-              <div className="flex items-center gap-3">
-                <span className="grid h-11 w-11 shrink-0 place-items-center rounded-xl border border-gold/30 bg-ink text-gold">
-                  <Icon className="h-5 w-5" />
-                </span>
-                <div className="min-w-0">
-                  <h3 className="truncate font-display text-base font-bold text-paper">
+              {/* header */}
+              <div className="border-b border-line bg-gradient-to-br from-yellow/[0.06] to-transparent p-5">
+                <div className="flex items-center justify-between gap-2">
+                  <span className="inline-flex items-center gap-1.5 rounded-full border border-gold/40 bg-yellow/10 px-2.5 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-gold">
+                    <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-success" /> Onboarding Open
+                  </span>
+                  <span className="inline-flex shrink-0 items-center gap-1 text-[11px] text-muted">
+                    <MapPin className="h-3 w-3 text-gold" /> {c.address.city}, {c.address.state}
+                  </span>
+                </div>
+                <div className="mt-3 flex items-center gap-3">
+                  <span className="grid h-11 w-11 shrink-0 place-items-center rounded-xl border border-gold/30 bg-ink text-gold">
+                    <Icon className="h-5 w-5" />
+                  </span>
+                  <h3 className="min-w-0 truncate font-display text-lg font-bold text-paper">
                     {c.name.replace(/\s+LLC$/, "")}
                   </h3>
-                  <p className="inline-flex items-center gap-1 text-xs text-muted">
-                    <MapPin className="h-3 w-3 text-gold" /> {c.address.city}, {c.address.state}
-                  </p>
                 </div>
               </div>
 
-              <p className="mt-3 text-sm leading-relaxed text-muted">{c.tagline}</p>
+              {/* body */}
+              <div className="p-5">
+                <p className="text-sm leading-relaxed text-muted">{c.tagline}</p>
 
-              <div className="mt-4 flex flex-wrap gap-x-5 gap-y-1.5 border-t border-line pt-3 text-xs">
-                <span className="inline-flex items-center gap-1.5 text-muted">
-                  <Clock className="h-3.5 w-3.5 text-gold" /> {c.payTerms}
-                </span>
-                <span className="inline-flex items-center gap-1.5 text-muted">
-                  <FileText className="h-3.5 w-3.5 text-gold" /> {c.documents.length} documents
-                </span>
-              </div>
+                <div className="mt-4 overflow-hidden rounded-xl border border-line bg-ink/40">
+                  <div className="flex items-center justify-between gap-3 px-3.5 py-2.5">
+                    <span className="inline-flex items-center gap-1.5 text-xs uppercase tracking-wide text-muted">
+                      <Clock className="h-3.5 w-3.5 text-gold" /> Pay
+                    </span>
+                    <span className="text-right text-sm font-semibold text-gold">{c.payTerms}</span>
+                  </div>
+                  <div className="flex items-center justify-between gap-3 border-t border-line px-3.5 py-2.5">
+                    <span className="inline-flex items-center gap-1.5 text-xs uppercase tracking-wide text-muted">
+                      <FileText className="h-3.5 w-3.5 text-gold" /> Documents
+                    </span>
+                    <span className="text-sm font-semibold text-paper">{c.documents.length} required</span>
+                  </div>
+                </div>
 
-              <div className="mt-4 flex flex-col gap-2">
-                <NextLink
-                  href={`/onboarding/${c.slug}`}
-                  className="inline-flex items-center justify-center gap-1.5 rounded-full bg-yellow px-4 py-2.5 text-sm font-semibold text-black transition-all hover:bg-gold active:scale-[0.98]"
-                >
-                  Start Onboarding <ArrowRight className="h-4 w-4" />
-                </NextLink>
-                <NextLink
-                  href={`/onboarding/${c.slug}/requirements`}
-                  className="inline-flex items-center justify-center gap-1.5 rounded-full border border-white/20 px-4 py-2 text-sm font-semibold text-white/80 transition-all hover:border-gold hover:text-gold"
-                >
-                  View Requirements
-                </NextLink>
+                <div className="mt-4 flex flex-col gap-2">
+                  <NextLink
+                    href={`/onboarding/${c.slug}`}
+                    className="group inline-flex items-center justify-center gap-1.5 rounded-full bg-yellow px-4 py-2.5 text-sm font-semibold text-black shadow-[0_8px_24px_-8px_rgba(255,208,0,0.6)] transition-all hover:bg-gold active:scale-[0.98]"
+                  >
+                    Start Onboarding{" "}
+                    <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
+                  </NextLink>
+                  <NextLink
+                    href={`/onboarding/${c.slug}/requirements`}
+                    className="inline-flex items-center justify-center gap-1.5 rounded-full border border-white/15 px-4 py-2 text-sm font-semibold text-white/80 transition-all hover:border-gold hover:text-gold"
+                  >
+                    View Requirements
+                  </NextLink>
+                </div>
               </div>
             </div>
           );

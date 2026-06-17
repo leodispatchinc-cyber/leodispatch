@@ -250,57 +250,72 @@ export default function RadialOrbitalTimeline({
 
                 {/* expanded card */}
                 {isExpanded && (
-                  <div className="absolute top-24 left-1/2 w-72 -translate-x-1/2 overflow-visible rounded-2xl border border-gold/30 bg-ink/95 shadow-xl shadow-black/60 backdrop-blur-lg">
+                  <div
+                    onClick={(e) => e.stopPropagation()}
+                    className="absolute left-1/2 top-24 w-80 max-w-[84vw] -translate-x-1/2 overflow-hidden rounded-2xl border border-gold/30 bg-ink/95 text-left shadow-2xl shadow-black/70 backdrop-blur-xl"
+                  >
                     <div className="absolute -top-3 left-1/2 h-3 w-px -translate-x-1/2 bg-gold/50"></div>
 
-                    <div className="border-b border-white/10 p-4">
-                      <div className="flex items-center justify-between">
-                        <span className="rounded-full border border-gold/40 bg-yellow/10 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-gold">
-                          Onboarding Open
+                    {/* header */}
+                    <div className="border-b border-white/10 bg-gradient-to-br from-yellow/[0.08] to-transparent p-4">
+                      <div className="flex items-center justify-between gap-2">
+                        <span className="inline-flex items-center gap-1.5 rounded-full border border-gold/40 bg-yellow/10 px-2.5 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-gold">
+                          <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-success" /> Onboarding Open
                         </span>
-                        <span className="inline-flex items-center gap-1 font-mono text-[11px] text-white/50">
-                          <MapPin size={10} /> {item.date}
+                        <span className="inline-flex shrink-0 items-center gap-1 text-[11px] text-white/55">
+                          <MapPin size={11} className="text-gold" /> {item.date}
                         </span>
                       </div>
-                      <h3 className="mt-2 font-display text-base font-bold text-paper">{item.title}</h3>
+                      <div className="mt-3 flex items-center gap-2.5">
+                        <span className="grid h-10 w-10 shrink-0 place-items-center rounded-xl border border-gold/30 bg-ink text-gold">
+                          <Icon size={18} />
+                        </span>
+                        <h3 className="min-w-0 truncate font-display text-base font-bold text-paper">
+                          {item.title}
+                        </h3>
+                      </div>
                     </div>
 
-                    <div className="p-4 text-xs text-white/80">
-                      <p className="leading-relaxed">{item.content}</p>
+                    {/* body */}
+                    <div className="p-4">
+                      <p className="text-xs leading-relaxed text-white/75">{item.content}</p>
 
-                      <div className="mt-4 space-y-2 border-t border-white/10 pt-3">
-                        {item.payTerms && (
-                          <div className="flex items-center justify-between">
-                            <span className="flex items-center text-white/60">
-                              <Clock size={11} className="mr-1.5 text-gold" /> Pay
-                            </span>
-                            <span className="font-mono text-gold">{item.payTerms}</span>
-                          </div>
-                        )}
-                        {typeof item.docCount === "number" && (
-                          <div className="flex items-center justify-between">
-                            <span className="flex items-center text-white/60">
-                              <FileText size={11} className="mr-1.5 text-gold" /> Documents
-                            </span>
-                            <span className="font-mono">{item.docCount} required</span>
-                          </div>
-                        )}
-                      </div>
+                      {(item.payTerms || typeof item.docCount === "number") && (
+                        <div className="mt-4 overflow-hidden rounded-xl border border-white/10 bg-white/[0.02]">
+                          {item.payTerms && (
+                            <div className="flex items-center justify-between gap-3 px-3 py-2.5">
+                              <span className="inline-flex items-center gap-1.5 text-[11px] uppercase tracking-wide text-white/50">
+                                <Clock size={11} className="text-gold" /> Pay
+                              </span>
+                              <span className="text-right text-xs font-semibold text-gold">{item.payTerms}</span>
+                            </div>
+                          )}
+                          {typeof item.docCount === "number" && (
+                            <div className="flex items-center justify-between gap-3 border-t border-white/10 px-3 py-2.5">
+                              <span className="inline-flex items-center gap-1.5 text-[11px] uppercase tracking-wide text-white/50">
+                                <FileText size={11} className="text-gold" /> Documents
+                              </span>
+                              <span className="text-xs font-semibold text-paper">{item.docCount} required</span>
+                            </div>
+                          )}
+                        </div>
+                      )}
 
                       {item.href && (
                         <div className="mt-4 flex flex-col gap-2">
                           <NextLink
                             href={item.href}
                             onClick={(e) => e.stopPropagation()}
-                            className="inline-flex items-center justify-center gap-1.5 rounded-full bg-yellow px-4 py-2.5 text-xs font-semibold text-black transition-all hover:bg-gold active:scale-[0.98]"
+                            className="group inline-flex items-center justify-center gap-1.5 rounded-full bg-yellow px-4 py-2.5 text-xs font-semibold text-black shadow-[0_8px_24px_-8px_rgba(255,208,0,0.6)] transition-all hover:bg-gold active:scale-[0.98]"
                           >
-                            Start Onboarding <ArrowRight size={12} />
+                            Start Onboarding{" "}
+                            <ArrowRight size={12} className="transition-transform group-hover:translate-x-0.5" />
                           </NextLink>
                           {item.requirementsHref && (
                             <NextLink
                               href={item.requirementsHref}
                               onClick={(e) => e.stopPropagation()}
-                              className="inline-flex items-center justify-center gap-1.5 rounded-full border border-white/20 px-4 py-2 text-xs font-semibold text-white/80 transition-all hover:border-gold hover:text-gold"
+                              className="inline-flex items-center justify-center gap-1.5 rounded-full border border-white/15 px-4 py-2 text-xs font-semibold text-white/80 transition-all hover:border-gold hover:text-gold"
                             >
                               View Requirements
                             </NextLink>
@@ -310,11 +325,8 @@ export default function RadialOrbitalTimeline({
 
                       {item.relatedIds.length > 0 && (
                         <div className="mt-4 border-t border-white/10 pt-3">
-                          <div className="mb-2 flex items-center">
-                            <LinkIcon size={10} className="mr-1 text-white/70" />
-                            <h4 className="text-[10px] font-medium uppercase tracking-wider text-white/70">
-                              Other Authorities
-                            </h4>
+                          <div className="mb-2 flex items-center gap-1 text-[10px] font-medium uppercase tracking-wider text-white/55">
+                            <LinkIcon size={10} /> Other Authorities
                           </div>
                           <div className="flex flex-wrap gap-1.5">
                             {item.relatedIds.map((relatedId) => {
@@ -322,14 +334,14 @@ export default function RadialOrbitalTimeline({
                               return (
                                 <button
                                   key={relatedId}
-                                  className="inline-flex items-center gap-1 rounded-full border border-white/20 bg-transparent px-2.5 py-1 text-[11px] text-white/80 transition-all hover:border-gold hover:bg-white/5 hover:text-white"
+                                  className="inline-flex items-center gap-1 rounded-full border border-white/15 px-2.5 py-1 text-[11px] text-white/75 transition-all hover:border-gold hover:bg-white/5 hover:text-white"
                                   onClick={(e) => {
                                     e.stopPropagation();
                                     toggleItem(relatedId);
                                   }}
                                 >
                                   {relatedItem?.title}
-                                  <ArrowRight size={9} className="text-white/60" />
+                                  <ArrowRight size={9} className="text-white/50" />
                                 </button>
                               );
                             })}
