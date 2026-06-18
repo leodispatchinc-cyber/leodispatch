@@ -28,9 +28,19 @@ export async function generateMetadata({
 }): Promise<Metadata> {
   const { company } = await params;
   const c = getCompany(company);
+  const title = c ? `${c.name} — Document Requirements | Leo Dispatch Inc` : "Document Requirements — Leo Dispatch Inc";
+  const description = c ? `Documents and information required to onboard with ${c.name}.` : undefined;
   return {
-    title: c ? `${c.name} — Document Requirements | Leo Dispatch Inc` : "Document Requirements — Leo Dispatch Inc",
-    description: c ? `Documents and information required to onboard with ${c.name}.` : undefined,
+    title,
+    description,
+    alternates: { canonical: `/onboarding/${company}/requirements` },
+    openGraph: {
+      title,
+      description,
+      url: `/onboarding/${company}/requirements`,
+      type: "website",
+      siteName: "Leo Dispatch Inc",
+    },
   };
 }
 

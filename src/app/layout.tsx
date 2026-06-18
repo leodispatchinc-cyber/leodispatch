@@ -21,6 +21,7 @@ export const metadata: Metadata = {
   title: "Leo Dispatch Inc — Keep Your Truck Moving",
   description:
     "Dedicated truck dispatch for Owner Operators, Box Trucks, Hotshots, Dry Vans, Reefers and Small Fleets across the USA. We find the loads. You drive.",
+  applicationName: "Leo Dispatch Inc",
   keywords: [
     "truck dispatch",
     "owner operator dispatch",
@@ -33,6 +34,18 @@ export const metadata: Metadata = {
     title: "Leo Dispatch Inc — Keep Your Truck Moving",
     description: "We find the loads. You drive. 24/7 dedicated dispatch across 48 states.",
     type: "website",
+    siteName: "Leo Dispatch Inc",
+    locale: "en_US",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Leo Dispatch Inc — Keep Your Truck Moving",
+    description: "We find the loads. You drive. 24/7 dedicated dispatch across 48 states.",
+  },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: { index: true, follow: true, "max-image-preview": "large", "max-snippet": -1 },
   },
 };
 

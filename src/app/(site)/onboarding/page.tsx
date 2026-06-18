@@ -8,6 +8,15 @@ export const metadata: Metadata = {
   title: "Carrier Onboarding — Leo Dispatch Inc",
   description:
     "Choose your MC authority and complete onboarding online. Upload your documents once and start booking loads fast.",
+  alternates: { canonical: "/onboarding" },
+  openGraph: {
+    title: "Carrier Onboarding — Leo Dispatch Inc",
+    description:
+      "Choose your MC authority and complete onboarding online. Upload your documents once and start booking loads fast.",
+    url: "/onboarding",
+    type: "website",
+    siteName: "Leo Dispatch Inc",
+  },
 };
 
 export default function OnboardingIndex() {

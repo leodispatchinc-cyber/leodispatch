@@ -11,6 +11,15 @@ export const metadata: Metadata = {
   title: "About Leo Dispatch Inc — Dispatch Built for Owner-Operators",
   description:
     "Leo Dispatch Inc is a dedicated truck dispatch and owner-operator recruitment company. We find the loads. You drive.",
+  alternates: { canonical: "/about" },
+  openGraph: {
+    title: "About Leo Dispatch Inc — Dispatch Built for Owner-Operators",
+    description:
+      "Leo Dispatch Inc is a dedicated truck dispatch and owner-operator recruitment company. We find the loads. You drive.",
+    url: "/about",
+    type: "website",
+    siteName: "Leo Dispatch Inc",
+  },
 };
 
 const values = [

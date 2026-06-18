@@ -8,6 +8,15 @@ export const metadata: Metadata = {
   title: "Contact Leo Dispatch Inc — Talk to a Dispatcher 24/7",
   description:
     "Get in touch with Leo Dispatch Inc. Call, email or send a message and a dedicated dispatcher will reach out fast.",
+  alternates: { canonical: "/contact" },
+  openGraph: {
+    title: "Contact Leo Dispatch Inc — Talk to a Dispatcher 24/7",
+    description:
+      "Get in touch with Leo Dispatch Inc. Call, email or send a message and a dedicated dispatcher will reach out fast.",
+    url: "/contact",
+    type: "website",
+    siteName: "Leo Dispatch Inc",
+  },
 };
 
 const channels = [

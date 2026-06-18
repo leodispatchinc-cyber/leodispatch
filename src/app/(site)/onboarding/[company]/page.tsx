@@ -20,9 +20,18 @@ export async function generateMetadata({
 }): Promise<Metadata> {
   const { company } = await params;
   const c = getCompany(company);
+  const title = c ? `${c.name} — Carrier Onboarding | Leo Dispatch Inc` : "Carrier Onboarding — Leo Dispatch Inc";
   return {
-    title: c ? `${c.name} — Carrier Onboarding | Leo Dispatch Inc` : "Carrier Onboarding — Leo Dispatch Inc",
+    title,
     description: c?.tagline,
+    alternates: { canonical: `/onboarding/${company}` },
+    openGraph: {
+      title,
+      description: c?.tagline,
+      url: `/onboarding/${company}`,
+      type: "website",
+      siteName: "Leo Dispatch Inc",
+    },
   };
 }
 

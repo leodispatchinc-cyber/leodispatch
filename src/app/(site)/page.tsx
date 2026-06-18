@@ -7,6 +7,12 @@ import CarrierPrograms from "@/components/sections/CarrierPrograms";
 import SuccessStories from "@/components/sections/SuccessStories";
 import ContactCTA from "@/components/sections/ContactCTA";
 import RevealSection from "@/components/ui/RevealSection";
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+  alternates: { canonical: "/" },
+  openGraph: { url: "/" },
+};
 
 export default function Home() {
   return (

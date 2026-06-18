@@ -8,16 +8,28 @@ import FreightMap from "@/components/sections/FreightMap";
 import RevenueCalculator from "@/components/sections/RevenueCalculator";
 import FAQ from "@/components/sections/FAQ";
 import ContactCTA from "@/components/sections/ContactCTA";
+import JsonLd from "@/components/seo/JsonLd";
+import { faqPageLd } from "@/lib/seo";
 
 export const metadata: Metadata = {
   title: "Dispatch Services — Leo Dispatch Inc",
   description:
     "Full-service truck dispatch: load booking, rate negotiation, broker setup, paperwork, factoring and 24/7 support across 48 states.",
+  alternates: { canonical: "/services" },
+  openGraph: {
+    title: "Dispatch Services — Leo Dispatch Inc",
+    description:
+      "Full-service truck dispatch: load booking, rate negotiation, broker setup, paperwork, factoring and 24/7 support across 48 states.",
+    url: "/services",
+    type: "website",
+    siteName: "Leo Dispatch Inc",
+  },
 };
 
 export default function ServicesPage() {
   return (
     <>
+      <JsonLd data={faqPageLd} />
       <PageHeader
         eyebrow="What We Do"
         title={<>Full-Service <span className="text-gradient-gold">Truck Dispatch</span></>}

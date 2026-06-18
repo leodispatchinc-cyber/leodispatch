@@ -10,6 +10,15 @@ export const metadata: Metadata = {
   title: "Equipment We Dispatch — Leo Dispatch Inc",
   description:
     "We dispatch hotshots, box trucks, dry vans, reefers, flatbeds, power only and step decks across all 48 states.",
+  alternates: { canonical: "/equipment" },
+  openGraph: {
+    title: "Equipment We Dispatch — Leo Dispatch Inc",
+    description:
+      "We dispatch hotshots, box trucks, dry vans, reefers, flatbeds, power only and step decks across all 48 states.",
+    url: "/equipment",
+    type: "website",
+    siteName: "Leo Dispatch Inc",
+  },
 };
 
 export default function EquipmentPage() {
