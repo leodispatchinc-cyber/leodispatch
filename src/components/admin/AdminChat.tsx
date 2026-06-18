@@ -116,9 +116,9 @@ export default function AdminChat() {
   }
 
   return (
-    <div className="mt-6 grid h-[calc(100vh-220px)] min-h-[460px] overflow-hidden rounded-2xl border border-line bg-surface lg:grid-cols-[320px_1fr]">
+    <div className="mt-6 grid min-h-0 flex-1 overflow-hidden rounded-2xl border border-line bg-surface lg:grid-cols-[320px_1fr]">
       {/* List */}
-      <div className={`flex flex-col border-line lg:border-r ${active ? "hidden lg:flex" : "flex"}`}>
+      <div className={`flex min-h-0 flex-col border-line lg:border-r ${active ? "hidden lg:flex" : "flex"}`}>
         <div className="flex items-center justify-between border-b border-line px-4 py-3">
           <span className="text-sm font-bold text-paper">Conversations</span>
           {totalUnread > 0 && (
@@ -168,7 +168,7 @@ export default function AdminChat() {
       </div>
 
       {/* Thread */}
-      <div className={`flex-col ${active ? "flex" : "hidden lg:flex"}`}>
+      <div className={`min-h-0 flex-col ${active ? "flex" : "hidden lg:flex"}`}>
         {!active ? (
           <div className="hidden flex-1 place-items-center text-center lg:grid">
             <div>
