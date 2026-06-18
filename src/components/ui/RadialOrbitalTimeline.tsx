@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useRef } from "react";
 import NextLink from "next/link";
+import { useRouter } from "next/navigation";
 import { ArrowRight, Link as LinkIcon, FileText, Clock, MapPin } from "lucide-react";
 
 export interface OrbitalItem {
@@ -42,6 +43,7 @@ export default function RadialOrbitalTimeline({
   const containerRef = useRef<HTMLDivElement>(null);
   const orbitRef = useRef<HTMLDivElement>(null);
   const nodeRefs = useRef<Record<number, HTMLDivElement | null>>({});
+  const router = useRouter();
 
   const handleContainerClick = (e: React.MouseEvent<HTMLDivElement>) => {
     if (e.target === containerRef.current || e.target === orbitRef.current) {
@@ -109,13 +111,16 @@ export default function RadialOrbitalTimeline({
     return () => io.disconnect();
   }, []);
 
+  // Auto-rotate only on desktop. On phones this 20×/sec setState loop saturates
+  // the main thread (janky scroll, taps feel frozen), so the orbit stays static
+  // there — the nodes are tappable and the card list below carries the details.
   useEffect(() => {
-    if (!autoRotate || !inView) return;
+    if (!autoRotate || !inView || compact) return;
     const rotationTimer = setInterval(() => {
       setRotationAngle((prev) => Number(((prev + 0.3) % 360).toFixed(3)));
     }, 50);
     return () => clearInterval(rotationTimer);
-  }, [autoRotate, inView]);
+  }, [autoRotate, inView, compact]);
 
   const centerViewOnNode = (nodeId: number) => {
     if (!nodeRefs.current[nodeId]) return;
@@ -224,11 +229,16 @@ export default function RadialOrbitalTimeline({
                 ref={(el) => {
                   nodeRefs.current[item.id] = el;
                 }}
-                className={`absolute transition-all duration-700 ${compact ? "" : "cursor-pointer"}`}
+                className="absolute cursor-pointer transition-all duration-700"
                 style={nodeStyle}
                 onClick={(e) => {
                   e.stopPropagation();
-                  if (compact) return; // phones: nodes are visual only (see cards below)
+                  // Phones: the orbit is static (no expand card), so a tap takes
+                  // the visitor straight to that authority's onboarding page.
+                  if (compact) {
+                    if (item.href) router.push(item.href);
+                    return;
+                  }
                   toggleItem(item.id);
                 }}
               >
