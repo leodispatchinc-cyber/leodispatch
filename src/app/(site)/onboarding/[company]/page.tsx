@@ -8,6 +8,7 @@ import AgreementSigner from "@/components/AgreementSigner";
 import { mcCompanies, getCompany, fullAddress } from "@/lib/companies";
 import { getAgreement } from "@/lib/agreements";
 import { site } from "@/lib/data";
+import { pageMetadata } from "@/lib/seo";
 
 export function generateStaticParams() {
   return mcCompanies.map((c) => ({ company: c.slug }));
@@ -21,18 +22,7 @@ export async function generateMetadata({
   const { company } = await params;
   const c = getCompany(company);
   const title = c ? `${c.name} — Carrier Onboarding | Leo Dispatch Inc` : "Carrier Onboarding — Leo Dispatch Inc";
-  return {
-    title,
-    description: c?.tagline,
-    alternates: { canonical: `/onboarding/${company}` },
-    openGraph: {
-      title,
-      description: c?.tagline,
-      url: `/onboarding/${company}`,
-      type: "website",
-      siteName: "Leo Dispatch Inc",
-    },
-  };
+  return pageMetadata({ title, description: c?.tagline, path: `/onboarding/${company}` });
 }
 
 export default async function CompanyOnboardingPage({

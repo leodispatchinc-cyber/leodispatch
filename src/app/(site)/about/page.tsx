@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import { pageMetadata } from "@/lib/seo";
 import { Target, Shield, HeartHandshake, TrendingUp } from "lucide-react";
 import PageHeader from "@/components/ui/PageHeader";
 import Reveal from "@/components/ui/Reveal";
@@ -7,20 +7,12 @@ import SuccessStories from "@/components/sections/SuccessStories";
 import ContactCTA from "@/components/sections/ContactCTA";
 import { heroStats } from "@/lib/data";
 
-export const metadata: Metadata = {
+export const metadata = pageMetadata({
   title: "About Leo Dispatch Inc — Dispatch Built for Owner-Operators",
   description:
     "Leo Dispatch Inc is a dedicated truck dispatch and owner-operator recruitment company. We find the loads. You drive.",
-  alternates: { canonical: "/about" },
-  openGraph: {
-    title: "About Leo Dispatch Inc — Dispatch Built for Owner-Operators",
-    description:
-      "Leo Dispatch Inc is a dedicated truck dispatch and owner-operator recruitment company. We find the loads. You drive.",
-    url: "/about",
-    type: "website",
-    siteName: "Leo Dispatch Inc",
-  },
-};
+  path: "/about",
+});
 
 const values = [
   {

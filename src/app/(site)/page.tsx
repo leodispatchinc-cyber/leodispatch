@@ -7,12 +7,14 @@ import CarrierPrograms from "@/components/sections/CarrierPrograms";
 import SuccessStories from "@/components/sections/SuccessStories";
 import ContactCTA from "@/components/sections/ContactCTA";
 import RevealSection from "@/components/ui/RevealSection";
-import type { Metadata } from "next";
+import { pageMetadata } from "@/lib/seo";
 
-export const metadata: Metadata = {
-  alternates: { canonical: "/" },
-  openGraph: { url: "/" },
-};
+export const metadata = pageMetadata({
+  title: "Leo Dispatch Inc — Keep Your Truck Moving",
+  description:
+    "Dedicated truck dispatch for Owner Operators, Box Trucks, Hotshots, Dry Vans, Reefers and Small Fleets across the USA. We find the loads. You drive.",
+  path: "/",
+});
 
 export default function Home() {
   return (

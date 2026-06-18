@@ -1,24 +1,16 @@
-import type { Metadata } from "next";
+import { pageMetadata } from "@/lib/seo";
 import PageHeader from "@/components/ui/PageHeader";
 import CarrierPrograms from "@/components/sections/CarrierPrograms";
 import WhyChooseUs from "@/components/sections/WhyChooseUs";
 import Recruitment from "@/components/sections/Recruitment";
 import ContactCTA from "@/components/sections/ContactCTA";
 
-export const metadata: Metadata = {
+export const metadata = pageMetadata({
   title: "Carriers & MC Authority Programs — Leo Dispatch Inc",
   description:
     "Lease your truck onto an established MC authority, upload your documents once, and start booking high-paying loads with dedicated dispatch.",
-  alternates: { canonical: "/carriers" },
-  openGraph: {
-    title: "Carriers & MC Authority Programs — Leo Dispatch Inc",
-    description:
-      "Lease your truck onto an established MC authority, upload your documents once, and start booking high-paying loads with dedicated dispatch.",
-    url: "/carriers",
-    type: "website",
-    siteName: "Leo Dispatch Inc",
-  },
-};
+  path: "/carriers",
+});
 
 export default function CarriersPage() {
   return (

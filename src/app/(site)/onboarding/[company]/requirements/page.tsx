@@ -16,6 +16,7 @@ import PageHeader from "@/components/ui/PageHeader";
 import { mcCompanies, getCompany, fullAddress } from "@/lib/companies";
 import { getAgreement } from "@/lib/agreements";
 import AgreementSigner from "@/components/AgreementSigner";
+import { pageMetadata } from "@/lib/seo";
 
 export function generateStaticParams() {
   return mcCompanies.map((c) => ({ company: c.slug }));
@@ -30,18 +31,7 @@ export async function generateMetadata({
   const c = getCompany(company);
   const title = c ? `${c.name} — Document Requirements | Leo Dispatch Inc` : "Document Requirements — Leo Dispatch Inc";
   const description = c ? `Documents and information required to onboard with ${c.name}.` : undefined;
-  return {
-    title,
-    description,
-    alternates: { canonical: `/onboarding/${company}/requirements` },
-    openGraph: {
-      title,
-      description,
-      url: `/onboarding/${company}/requirements`,
-      type: "website",
-      siteName: "Leo Dispatch Inc",
-    },
-  };
+  return pageMetadata({ title, description, path: `/onboarding/${company}/requirements` });
 }
 
 export default async function RequirementsPage({

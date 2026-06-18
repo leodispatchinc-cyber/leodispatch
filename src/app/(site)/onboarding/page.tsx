@@ -1,23 +1,15 @@
-import type { Metadata } from "next";
+import { pageMetadata } from "@/lib/seo";
 import Link from "next/link";
 import { ArrowRight, MapPin, Clock, Lock, FileText } from "lucide-react";
 import PageHeader from "@/components/ui/PageHeader";
 import { mcCompanies, fullAddress } from "@/lib/companies";
 
-export const metadata: Metadata = {
+export const metadata = pageMetadata({
   title: "Carrier Onboarding — Leo Dispatch Inc",
   description:
     "Choose your MC authority and complete onboarding online. Upload your documents once and start booking loads fast.",
-  alternates: { canonical: "/onboarding" },
-  openGraph: {
-    title: "Carrier Onboarding — Leo Dispatch Inc",
-    description:
-      "Choose your MC authority and complete onboarding online. Upload your documents once and start booking loads fast.",
-    url: "/onboarding",
-    type: "website",
-    siteName: "Leo Dispatch Inc",
-  },
-};
+  path: "/onboarding",
+});
 
 export default function OnboardingIndex() {
   return (

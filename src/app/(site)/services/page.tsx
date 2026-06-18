@@ -1,4 +1,3 @@
-import type { Metadata } from "next";
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 import PageHeader from "@/components/ui/PageHeader";
@@ -9,22 +8,14 @@ import RevenueCalculator from "@/components/sections/RevenueCalculator";
 import FAQ from "@/components/sections/FAQ";
 import ContactCTA from "@/components/sections/ContactCTA";
 import JsonLd from "@/components/seo/JsonLd";
-import { faqPageLd } from "@/lib/seo";
+import { faqPageLd, pageMetadata } from "@/lib/seo";
 
-export const metadata: Metadata = {
+export const metadata = pageMetadata({
   title: "Dispatch Services — Leo Dispatch Inc",
   description:
     "Full-service truck dispatch: load booking, rate negotiation, broker setup, paperwork, factoring and 24/7 support across 48 states.",
-  alternates: { canonical: "/services" },
-  openGraph: {
-    title: "Dispatch Services — Leo Dispatch Inc",
-    description:
-      "Full-service truck dispatch: load booking, rate negotiation, broker setup, paperwork, factoring and 24/7 support across 48 states.",
-    url: "/services",
-    type: "website",
-    siteName: "Leo Dispatch Inc",
-  },
-};
+  path: "/services",
+});
 
 export default function ServicesPage() {
   return (

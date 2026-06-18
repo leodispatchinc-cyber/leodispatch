@@ -1,23 +1,15 @@
-import type { Metadata } from "next";
+import { pageMetadata } from "@/lib/seo";
 import { Phone, Mail, Clock, MapPin } from "lucide-react";
 import PageHeader from "@/components/ui/PageHeader";
 import ContactForm from "@/components/ContactForm";
 import { site } from "@/lib/data";
 
-export const metadata: Metadata = {
+export const metadata = pageMetadata({
   title: "Contact Leo Dispatch Inc — Talk to a Dispatcher 24/7",
   description:
     "Get in touch with Leo Dispatch Inc. Call, email or send a message and a dedicated dispatcher will reach out fast.",
-  alternates: { canonical: "/contact" },
-  openGraph: {
-    title: "Contact Leo Dispatch Inc — Talk to a Dispatcher 24/7",
-    description:
-      "Get in touch with Leo Dispatch Inc. Call, email or send a message and a dedicated dispatcher will reach out fast.",
-    url: "/contact",
-    type: "website",
-    siteName: "Leo Dispatch Inc",
-  },
-};
+  path: "/contact",
+});
 
 const channels = [
   { icon: Phone, label: "Call Us", value: site.phone, href: site.phoneHref },

@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import { pageMetadata } from "@/lib/seo";
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 import PageHeader from "@/components/ui/PageHeader";
@@ -6,20 +6,12 @@ import TruckTypes from "@/components/sections/TruckTypes";
 import RevenueCalculator from "@/components/sections/RevenueCalculator";
 import ContactCTA from "@/components/sections/ContactCTA";
 
-export const metadata: Metadata = {
+export const metadata = pageMetadata({
   title: "Equipment We Dispatch — Leo Dispatch Inc",
   description:
     "We dispatch hotshots, box trucks, dry vans, reefers, flatbeds, power only and step decks across all 48 states.",
-  alternates: { canonical: "/equipment" },
-  openGraph: {
-    title: "Equipment We Dispatch — Leo Dispatch Inc",
-    description:
-      "We dispatch hotshots, box trucks, dry vans, reefers, flatbeds, power only and step decks across all 48 states.",
-    url: "/equipment",
-    type: "website",
-    siteName: "Leo Dispatch Inc",
-  },
-};
+  path: "/equipment",
+});
 
 export default function EquipmentPage() {
   return (

@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Inter, Archivo } from "next/font/google";
 import "./globals.css";
 import { SITE_URL } from "@/lib/site";
+import { OG_IMAGE } from "@/lib/seo";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -36,11 +37,13 @@ export const metadata: Metadata = {
     type: "website",
     siteName: "Leo Dispatch Inc",
     locale: "en_US",
+    images: [OG_IMAGE],
   },
   twitter: {
     card: "summary_large_image",
     title: "Leo Dispatch Inc — Keep Your Truck Moving",
     description: "We find the loads. You drive. 24/7 dedicated dispatch across 48 states.",
+    images: [OG_IMAGE.url],
   },
   robots: {
     index: true,
