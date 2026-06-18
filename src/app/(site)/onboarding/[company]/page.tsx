@@ -4,7 +4,9 @@ import { notFound } from "next/navigation";
 import { ArrowLeft, MapPin, Clock, Check, Phone, ShieldCheck, ClipboardList } from "lucide-react";
 import PageHeader from "@/components/ui/PageHeader";
 import OnboardingForm from "@/components/OnboardingForm";
+import AgreementSigner from "@/components/AgreementSigner";
 import { mcCompanies, getCompany, fullAddress } from "@/lib/companies";
+import { getAgreement } from "@/lib/agreements";
 import { site } from "@/lib/data";
 
 export function generateStaticParams() {
@@ -32,6 +34,8 @@ export default async function CompanyOnboardingPage({
   const { company } = await params;
   const c = getCompany(company);
   if (!c) notFound();
+
+  const agreement = getAgreement(c.slug);
 
   // Coming-soon authorities show a holding page instead of a form.
   if (c.status !== "active") {
@@ -158,6 +162,11 @@ export default async function CompanyOnboardingPage({
 
           {/* Form */}
           <div>
+            {agreement && (
+              <div className="mb-6">
+                <AgreementSigner companySlug={c.slug} companyName={c.name} agreement={agreement} />
+              </div>
+            )}
             <OnboardingForm company={c} />
           </div>
         </div>

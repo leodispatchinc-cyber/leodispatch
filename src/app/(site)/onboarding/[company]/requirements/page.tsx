@@ -14,6 +14,8 @@ import {
 } from "lucide-react";
 import PageHeader from "@/components/ui/PageHeader";
 import { mcCompanies, getCompany, fullAddress } from "@/lib/companies";
+import { getAgreement } from "@/lib/agreements";
+import AgreementSigner from "@/components/AgreementSigner";
 
 export function generateStaticParams() {
   return mcCompanies.map((c) => ({ company: c.slug }));
@@ -41,6 +43,7 @@ export default async function RequirementsPage({
   const c = getCompany(company);
   if (!c) notFound();
 
+  const agreement = getAgreement(c.slug);
   const info: string[] = ["Driver full name", "Phone number", "Email", "MC number", "DOT number"];
   if (c.collectTruck) info.push("Truck make, model, year & VIN");
   if (c.collectTruckDimensions) info.push("Truck dimensions (length, width, height, cargo area)");
@@ -156,6 +159,10 @@ export default async function RequirementsPage({
                   ))}
                 </ol>
               </div>
+
+              {agreement && (
+                <AgreementSigner companySlug={c.slug} companyName={c.name} agreement={agreement} />
+              )}
             </div>
 
             {/* Sidebar: info needed + CTA */}
