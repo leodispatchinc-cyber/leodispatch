@@ -51,12 +51,13 @@ export default function AuthoritiesOrbit() {
         />
       </div>
 
-      {/* Desktop / tablet: the interactive radial orbit */}
-      <div className="hidden sm:block">
-        <RadialOrbitalTimeline timelineData={timelineData} />
-      </div>
+      {/* The radial orbit — interactive on desktop/tablet, a scaled-down
+          animated showcase on phones. */}
+      <RadialOrbitalTimeline timelineData={timelineData} />
 
-      {/* Mobile: a clean, tappable card list (the orbit needs more room than a phone has) */}
+      {/* Phones also get a clean, tappable card list below the orbit so the pay
+          terms, document counts, and CTAs stay easy to reach without tapping
+          the small rotating nodes. */}
       <div className="container-x relative z-10 mt-10 grid gap-4 pb-16 sm:hidden">
         {active.map((c) => {
           const Icon = iconBySlug[c.slug] ?? Truck;

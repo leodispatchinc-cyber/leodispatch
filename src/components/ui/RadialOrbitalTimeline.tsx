@@ -35,6 +35,10 @@ export default function RadialOrbitalTimeline({
   const [pulseEffect, setPulseEffect] = useState<Record<number, boolean>>({});
   const [activeNodeId, setActiveNodeId] = useState<number | null>(null);
   const [inView, setInView] = useState(false);
+  // Orbit geometry scales down on phones so the whole constellation fits the
+  // screen. Defaults to the desktop value so the SSR/first-client render match.
+  const [radius, setRadius] = useState(200);
+  const [compact, setCompact] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
   const orbitRef = useRef<HTMLDivElement>(null);
   const nodeRefs = useRef<Record<number, HTMLDivElement | null>>({});
@@ -78,6 +82,20 @@ export default function RadialOrbitalTimeline({
     });
   };
 
+  // Match the orbit radius + interaction model to the viewport. Phones get a
+  // tighter radius and skip tap-to-expand (the node-anchored card would clip at
+  // the screen edge — the detailed card list below the orbit handles the CTAs).
+  useEffect(() => {
+    const sync = () => {
+      const mobile = window.innerWidth < 640;
+      setCompact(mobile);
+      setRadius(mobile ? 115 : 200);
+    };
+    sync();
+    window.addEventListener("resize", sync);
+    return () => window.removeEventListener("resize", sync);
+  }, []);
+
   // pause the auto-rotate (and its 20×/sec re-render) whenever this section is
   // scrolled out of view — keeps the rest of the page (e.g. the hero) smooth.
   useEffect(() => {
@@ -109,7 +127,6 @@ export default function RadialOrbitalTimeline({
 
   const calculateNodePosition = (index: number, total: number) => {
     const angle = ((index / total) * 360 + rotationAngle) % 360;
-    const radius = 200;
     const radian = (angle * Math.PI) / 180;
 
     // Round every derived value to a fixed precision. Node (server) and the
@@ -140,17 +157,17 @@ export default function RadialOrbitalTimeline({
 
   return (
     <div
-      className="relative flex h-[620px] w-full items-center justify-center overflow-hidden sm:h-[700px]"
+      className="relative flex h-[440px] w-full items-center justify-center overflow-hidden sm:h-[700px]"
       ref={containerRef}
       onClick={handleContainerClick}
     >
       {/* ── decorative orbital field — sits behind the nodes ── */}
       <div className="pointer-events-none absolute inset-0">
         {/* warm gold core glow */}
-        <div className="absolute left-1/2 top-1/2 h-[480px] w-[480px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-[radial-gradient(circle,rgba(255,200,0,0.18),rgba(255,150,0,0.05)_44%,transparent_72%)] blur-2xl" />
+        <div className="absolute left-1/2 top-1/2 h-[300px] w-[300px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-[radial-gradient(circle,rgba(255,200,0,0.18),rgba(255,150,0,0.05)_44%,transparent_72%)] blur-2xl sm:h-[480px] sm:w-[480px]" />
         {/* faint radar spokes, masked to a mid-ring band */}
         <div
-          className="absolute left-1/2 top-1/2 h-[760px] w-[760px] -translate-x-1/2 -translate-y-1/2 rounded-full opacity-70"
+          className="absolute left-1/2 top-1/2 h-[440px] w-[440px] -translate-x-1/2 -translate-y-1/2 rounded-full opacity-70 sm:h-[760px] sm:w-[760px]"
           style={{
             background:
               "repeating-conic-gradient(from 0deg, transparent 0deg 14deg, rgba(255,255,255,0.05) 14deg 15deg)",
@@ -161,10 +178,10 @@ export default function RadialOrbitalTimeline({
           }}
         />
         {/* concentric orbit rings */}
-        <div className="absolute left-1/2 top-1/2 h-[250px] w-[250px] -translate-x-1/2 -translate-y-1/2 rounded-full border border-white/[0.08]" />
-        <div className="absolute left-1/2 top-1/2 h-[400px] w-[400px] -translate-x-1/2 -translate-y-1/2 rounded-full border border-dashed border-gold/20" />
-        <div className="absolute left-1/2 top-1/2 h-[560px] w-[560px] -translate-x-1/2 -translate-y-1/2 rounded-full border border-white/[0.05]" />
-        <div className="absolute left-1/2 top-1/2 h-[720px] w-[720px] -translate-x-1/2 -translate-y-1/2 rounded-full border border-white/[0.035]" />
+        <div className="absolute left-1/2 top-1/2 h-[150px] w-[150px] -translate-x-1/2 -translate-y-1/2 rounded-full border border-white/[0.08] sm:h-[250px] sm:w-[250px]" />
+        <div className="absolute left-1/2 top-1/2 h-[230px] w-[230px] -translate-x-1/2 -translate-y-1/2 rounded-full border border-dashed border-gold/20 sm:h-[400px] sm:w-[400px]" />
+        <div className="absolute left-1/2 top-1/2 h-[320px] w-[320px] -translate-x-1/2 -translate-y-1/2 rounded-full border border-white/[0.05] sm:h-[560px] sm:w-[560px]" />
+        <div className="absolute left-1/2 top-1/2 h-[420px] w-[420px] -translate-x-1/2 -translate-y-1/2 rounded-full border border-white/[0.035] sm:h-[720px] sm:w-[720px]" />
         {/* frame vignette to focus the centre */}
         <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,transparent_40%,rgba(10,10,10,0.85)_88%)]" />
       </div>
@@ -186,7 +203,7 @@ export default function RadialOrbitalTimeline({
           </div>
 
           {/* Orbit ring */}
-          <div className="absolute h-96 w-96 rounded-full border border-white/10"></div>
+          <div className="absolute h-[230px] w-[230px] rounded-full border border-white/10 sm:h-96 sm:w-96"></div>
 
           {timelineData.map((item, index) => {
             const position = calculateNodePosition(index, timelineData.length);
@@ -207,10 +224,11 @@ export default function RadialOrbitalTimeline({
                 ref={(el) => {
                   nodeRefs.current[item.id] = el;
                 }}
-                className="absolute cursor-pointer transition-all duration-700"
+                className={`absolute transition-all duration-700 ${compact ? "" : "cursor-pointer"}`}
                 style={nodeStyle}
                 onClick={(e) => {
                   e.stopPropagation();
+                  if (compact) return; // phones: nodes are visual only (see cards below)
                   toggleItem(item.id);
                 }}
               >
