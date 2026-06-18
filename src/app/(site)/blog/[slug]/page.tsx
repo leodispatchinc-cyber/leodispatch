@@ -5,10 +5,9 @@ import { ArrowUpRight, Clock, Calendar, ChevronRight, User } from "lucide-react"
 import { getPostBySlug, listPublishedPosts } from "@/lib/store";
 import { formatPostDate, readingTime, type BlogPost } from "@/lib/blog";
 import { renderMarkdown } from "@/lib/markdown";
+import { SITE_URL } from "@/lib/site";
 
 export const dynamic = "force-dynamic";
-
-const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000";
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
   const { slug } = await params;

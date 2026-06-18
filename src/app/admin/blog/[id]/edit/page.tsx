@@ -2,10 +2,9 @@ import { notFound } from "next/navigation";
 import BlogEditor from "@/components/admin/BlogEditor";
 import { getPostById } from "@/lib/store";
 import { postToInput } from "@/lib/blog";
+import { SITE_URL } from "@/lib/site";
 
 export const dynamic = "force-dynamic";
-
-const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000";
 
 export default async function EditPostPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
