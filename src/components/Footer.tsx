@@ -60,8 +60,8 @@ export default function Footer() {
         <div className="mt-14 flex flex-col items-center justify-between gap-4 border-t border-line pt-7 text-sm text-muted sm:flex-row">
           <p>© {new Date().getFullYear()} {site.name}. All rights reserved.</p>
           <div className="flex gap-6">
-            <span className="cursor-pointer transition-colors hover:text-paper">Privacy Policy</span>
-            <span className="cursor-pointer transition-colors hover:text-paper">Terms of Service</span>
+            <Link href="/privacy" className="transition-colors hover:text-paper">Privacy Policy</Link>
+            <Link href="/terms" className="transition-colors hover:text-paper">Terms of Service</Link>
           </div>
         </div>
       </div>

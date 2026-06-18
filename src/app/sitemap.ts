@@ -15,12 +15,14 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     "/contact",
     "/blog",
     "/onboarding",
+    "/privacy",
+    "/terms",
   ];
 
   const staticEntries: MetadataRoute.Sitemap = staticPaths.map((p) => ({
     url: `${SITE_URL}${p}`,
     changeFrequency: p === "" || p === "/blog" ? "weekly" : "monthly",
-    priority: p === "" ? 1 : 0.7,
+    priority: p === "" ? 1 : p === "/privacy" || p === "/terms" ? 0.3 : 0.7,
   }));
 
   // Per-authority onboarding + requirements pages
