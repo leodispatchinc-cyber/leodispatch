@@ -195,6 +195,15 @@ html.lenis body {
     transform: rotate(360deg);
   }
 }
+/* Orbit auto-spin — used on phones for the authorities constellation so it
+   rotates like desktop without the 20×/sec React re-render (this is GPU
+   composited). The reduced-motion rule below disables it automatically. */
+.orbit-spin {
+  animation: spin-slow 60s linear infinite;
+}
+.orbit-spin-rev {
+  animation: spin-slow 60s linear infinite reverse;
+}
 .sunburst {
   background: repeating-conic-gradient(
     from 0deg,

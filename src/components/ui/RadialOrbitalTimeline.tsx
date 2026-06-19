@@ -210,6 +210,14 @@ export default function RadialOrbitalTimeline({
           {/* Orbit ring */}
           <div className="absolute h-[230px] w-[230px] rounded-full border border-white/10 sm:h-96 sm:w-96"></div>
 
+          {/* Node group. On phones the whole group spins via a GPU CSS animation
+              (zero React re-renders → scroll + taps stay smooth); desktop keeps
+              the JS-driven orbit + tap-to-expand untouched. */}
+          <div
+            className={`absolute inset-0 flex items-center justify-center${
+              compact ? " orbit-spin" : ""
+            }`}
+          >
           {timelineData.map((item, index) => {
             const position = calculateNodePosition(index, timelineData.length);
             const isExpanded = expandedItems[item.id];
@@ -219,8 +227,10 @@ export default function RadialOrbitalTimeline({
 
             const nodeStyle = {
               transform: `translate(${position.x}px, ${position.y}px)`,
-              zIndex: isExpanded ? 200 : position.zIndex,
-              opacity: isExpanded ? 1 : position.opacity,
+              zIndex: isExpanded ? 200 : compact ? 40 : position.zIndex,
+              // On phones the group spins, so keep every node fully visible
+              // (the desktop depth fade comes from the live rotation angle).
+              opacity: isExpanded ? 1 : compact ? 1 : position.opacity,
             };
 
             return (
@@ -242,6 +252,9 @@ export default function RadialOrbitalTimeline({
                   toggleItem(item.id);
                 }}
               >
+                {/* Counter-rotate the content so icons + labels stay upright
+                    while the group spins on phones (no-op on desktop). */}
+                <div className={compact ? "orbit-spin-rev" : "contents"}>
                 {/* glow */}
                 <div
                   className={`absolute -inset-1 rounded-full ${isPulsing ? "animate-pulse duration-1000" : ""}`}
@@ -379,9 +392,11 @@ export default function RadialOrbitalTimeline({
                     </div>
                   </div>
                 )}
+                </div>
               </div>
             );
           })}
+          </div>
         </div>
       </div>
     </div>
