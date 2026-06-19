@@ -190,7 +190,7 @@ export const mcCompanies: McCompany[] = [
     serviceArea: "Nationwide · 48 States",
     tagline:
       "Already have your own MC authority? Keep it — we just run your dispatch, booking high-paying loads and handling the paperwork while you drive.",
-    payTerms: "Dispatch-only · keep your own MC",
+    payTerms: "Run under your own MC authority",
     collectTruck: true,
     collectEld: false,
     collectBanking: false,
