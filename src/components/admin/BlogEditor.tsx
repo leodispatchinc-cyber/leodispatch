@@ -1,11 +1,48 @@
 "use client";
 
-import { useMemo, useState, useTransition } from "react";
+import { useMemo, useRef, useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { Save, Eye, ArrowLeft, Loader2, Search, Star } from "lucide-react";
+import { Save, Eye, ArrowLeft, Loader2, Search, Star, ImagePlus } from "lucide-react";
 import { savePost } from "@/app/admin/blog/actions";
 import { blogCategories, slugify, readingTime, type PostInput } from "@/lib/blog";
+
+/** Small file-picker button that uploads one image and hands back its URL. */
+function UploadButton({
+  label,
+  busy,
+  onPick,
+}: {
+  label: string;
+  busy: boolean;
+  onPick: (file: File) => void;
+}) {
+  const ref = useRef<HTMLInputElement>(null);
+  return (
+    <>
+      <button
+        type="button"
+        onClick={() => ref.current?.click()}
+        disabled={busy}
+        className="inline-flex items-center gap-1.5 rounded-lg border border-line px-2.5 py-1.5 text-xs font-medium text-muted transition-colors hover:border-gold hover:text-gold disabled:opacity-60"
+      >
+        {busy ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <ImagePlus className="h-3.5 w-3.5" />}
+        {busy ? "Uploading…" : label}
+      </button>
+      <input
+        ref={ref}
+        type="file"
+        accept="image/*"
+        className="hidden"
+        onChange={(e) => {
+          const f = e.target.files?.[0];
+          if (f) onPick(f);
+          e.target.value = ""; // allow re-picking the same file
+        }}
+      />
+    </>
+  );
+}
 
 function Counter({ value, ideal }: { value: number; ideal: number }) {
   const tone = value === 0 ? "text-muted" : value <= ideal ? "text-success" : "text-yellow";
@@ -32,9 +69,67 @@ export default function BlogEditor({
   const [form, setForm] = useState<PostInput>(initial);
   const [slugTouched, setSlugTouched] = useState(mode === "edit");
   const [error, setError] = useState("");
+  const [uploading, setUploading] = useState<null | "cover" | "body" | "og">(null);
+  const bodyRef = useRef<HTMLTextAreaElement>(null);
 
   function set<K extends keyof PostInput>(key: K, value: PostInput[K]) {
     setForm((f) => ({ ...f, [key]: value }));
+  }
+
+  /** Upload one image to the admin endpoint; returns its public URL or null. */
+  async function uploadImage(file: File): Promise<string | null> {
+    const fd = new FormData();
+    fd.append("file", file);
+    try {
+      const r = await fetch("/api/admin/blog/upload", { method: "POST", body: fd });
+      const d = await r.json().catch(() => ({}));
+      if (!r.ok || !d?.url) {
+        setError(d?.error || "Image upload failed. Please try again.");
+        return null;
+      }
+      return d.url as string;
+    } catch {
+      setError("Image upload failed. Please check your connection and try again.");
+      return null;
+    }
+  }
+
+  async function onUploadCover(file: File) {
+    setError("");
+    setUploading("cover");
+    const url = await uploadImage(file);
+    if (url) set("coverImage", url);
+    setUploading(null);
+  }
+
+  async function onUploadOg(file: File) {
+    setError("");
+    setUploading("og");
+    const url = await uploadImage(file);
+    if (url) set("ogImage", url);
+    setUploading(null);
+  }
+
+  // Upload an image and insert its Markdown at the caret in the body textarea.
+  async function onUploadBody(file: File) {
+    setError("");
+    setUploading("body");
+    const url = await uploadImage(file);
+    setUploading(null);
+    if (!url) return;
+    const alt = file.name.replace(/\.[^.]+$/, "").replace(/[_-]+/g, " ").trim();
+    const snippet = `\n\n![${alt}](${url})\n\n`;
+    const ta = bodyRef.current;
+    const start = ta?.selectionStart ?? form.body.length;
+    const end = ta?.selectionEnd ?? form.body.length;
+    const next = form.body.slice(0, start) + snippet + form.body.slice(end);
+    set("body", next);
+    requestAnimationFrame(() => {
+      if (!ta) return;
+      ta.focus();
+      const pos = start + snippet.length;
+      ta.setSelectionRange(pos, pos);
+    });
   }
 
   function onTitle(v: string) {
@@ -130,8 +225,11 @@ export default function BlogEditor({
                   placeholder="Short summary shown on cards and search results."
                 />
               </Field>
-              <Field label="Cover image URL">
-                <input className="field-input" value={form.coverImage} onChange={(e) => set("coverImage", e.target.value)} placeholder="https://…/cover.jpg" />
+              <Field label="Cover image">
+                <div className="flex items-center gap-2">
+                  <input className="field-input" value={form.coverImage} onChange={(e) => set("coverImage", e.target.value)} placeholder="Upload or paste an image URL" />
+                  <UploadButton label="Upload" busy={uploading === "cover"} onPick={onUploadCover} />
+                </div>
                 {form.coverImage ? (
                   // eslint-disable-next-line @next/next/no-img-element
                   <img src={form.coverImage} alt="" className="mt-2 h-24 w-full rounded-lg border border-line object-cover" />
@@ -145,13 +243,17 @@ export default function BlogEditor({
           </div>
 
           <div className="rounded-2xl border border-line bg-surface p-5">
-            <div className="flex items-center justify-between">
+            <div className="flex flex-wrap items-center justify-between gap-2">
               <label className="text-sm font-medium text-muted">Body (Markdown)</label>
-              <span className="text-[11px] text-muted">
-                {words} words · {readTime}
-              </span>
+              <div className="flex items-center gap-3">
+                <span className="text-[11px] text-muted">
+                  {words} words · {readTime}
+                </span>
+                <UploadButton label="Insert image" busy={uploading === "body"} onPick={onUploadBody} />
+              </div>
             </div>
             <textarea
+              ref={bodyRef}
               className="field-input mt-2 min-h-[420px] resize-y font-mono text-[13px] leading-relaxed"
               value={form.body}
               onChange={(e) => set("body", e.target.value)}
@@ -193,7 +295,10 @@ export default function BlogEditor({
               </Field>
               <div className="grid gap-4 sm:grid-cols-2">
                 <Field label="Social share image (OG)">
-                  <input className="field-input" value={form.ogImage} onChange={(e) => set("ogImage", e.target.value)} placeholder="Defaults to cover image" />
+                  <div className="flex items-center gap-2">
+                    <input className="field-input" value={form.ogImage} onChange={(e) => set("ogImage", e.target.value)} placeholder="Defaults to cover image" />
+                    <UploadButton label="Upload" busy={uploading === "og"} onPick={onUploadOg} />
+                  </div>
                 </Field>
                 <Field label="Canonical URL (optional)">
                   <input className="field-input" value={form.canonicalUrl} onChange={(e) => set("canonicalUrl", e.target.value)} placeholder="Leave empty for self" />

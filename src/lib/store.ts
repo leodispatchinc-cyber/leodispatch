@@ -117,6 +117,26 @@ export async function readUpload(submissionId: string, storedName: string) {
   return fs.readFile(full);
 }
 
+/* ── Blog images (CMS) ────────────────────────────────────────
+   Editor-uploaded post images live on the persistent volume at
+   .data/uploads/blog/ and are served publicly via /api/blog-image. */
+const BLOG_IMG_DIR = path.join(UPLOAD_DIR, "blog");
+
+export async function saveBlogImage(file: File): Promise<{ name: string; url: string }> {
+  await ensureDir(BLOG_IMG_DIR);
+  const safeBase = (file.name || "image").replace(/[^a-zA-Z0-9._-]/g, "_").slice(-100);
+  const uniq = crypto.randomUUID().slice(0, 8);
+  const storedName = `${uniq}__${safeBase}`;
+  const buf = Buffer.from(await file.arrayBuffer());
+  await fs.writeFile(path.join(BLOG_IMG_DIR, storedName), buf);
+  return { name: storedName, url: `/api/blog-image/${storedName}` };
+}
+
+export async function readBlogImage(name: string): Promise<Buffer> {
+  // guard against path traversal — only ever read from the blog image dir
+  return fs.readFile(path.join(BLOG_IMG_DIR, path.basename(name)));
+}
+
 /* ── Onboarding submissions ───────────────────────────────── */
 export async function saveOnboarding(
   rec: Omit<OnboardingSubmission, "id" | "createdAt" | "status">
