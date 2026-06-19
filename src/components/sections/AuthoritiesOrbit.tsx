@@ -1,16 +1,16 @@
 "use client";
 
 import NextLink from "next/link";
-import { Truck, Boxes, Building2, Headphones, ArrowRight, MapPin, Clock, FileText } from "lucide-react";
+import { Truck, Container, Warehouse, Route, ArrowRight, MapPin, Clock, FileText } from "lucide-react";
 import SectionHeading from "../ui/SectionHeading";
 import RadialOrbitalTimeline, { type OrbitalItem } from "../ui/RadialOrbitalTimeline";
 import { mcCompanies, companyShortLocation } from "@/lib/companies";
 
 const iconBySlug: Record<string, React.ElementType> = {
   "move-em-out-llc": Truck,
-  "tulare-trucking-llc": Boxes,
-  "silver-arrow-logistics-llc": Building2,
-  "leo-dispatch-inc": Headphones,
+  "tulare-trucking-llc": Container,
+  "silver-arrow-logistics-llc": Warehouse,
+  "leo-dispatch-inc": Route,
 };
 
 const active = mcCompanies.filter((c) => c.status === "active");
