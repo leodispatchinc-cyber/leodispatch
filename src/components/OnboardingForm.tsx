@@ -18,7 +18,7 @@ import {
   Clock,
 } from "lucide-react";
 import type { McCompany } from "@/lib/companies";
-import { fullAddress } from "@/lib/companies";
+import { companyLocation } from "@/lib/companies";
 
 type Status = "idle" | "sending" | "done" | "error";
 
@@ -240,7 +240,7 @@ export default function OnboardingForm({ company }: { company: McCompany }) {
         </div>
 
         {/* COI holder reminder */}
-        {company.coiHolder.name && (
+        {company.coiHolder && company.coiHolder.name && (
           <div className="mt-5 rounded-xl border border-gold/30 bg-yellow/[0.04] p-4">
             <div className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wide text-gold">
               <MapPin className="h-3.5 w-3.5" /> List this as your COI Certificate Holder
@@ -291,7 +291,7 @@ export default function OnboardingForm({ company }: { company: McCompany }) {
         </button>
         <p className="mt-3 text-center text-xs text-muted">
           Submitting for <span className="text-paper">{company.name}</span> ·{" "}
-          {fullAddress(company.address)}
+          {companyLocation(company)}
         </p>
       </div>
     </form>

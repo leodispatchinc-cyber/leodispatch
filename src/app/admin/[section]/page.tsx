@@ -2,7 +2,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { MapPin, Clock, Mailbox, FileInput } from "lucide-react";
 import { sectionMeta, formatDateTime } from "@/lib/admin";
-import { mcCompanies, fullAddress } from "@/lib/companies";
+import { mcCompanies, companyLocation } from "@/lib/companies";
 import { listContact, listApplications } from "@/lib/store";
 import UploadedDocuments from "@/components/admin/UploadedDocuments";
 import DocumentVerification from "@/components/admin/DocumentVerification";
@@ -73,7 +73,7 @@ function McCompanies() {
           {c.status === "active" && (
             <div className="mt-2 flex flex-col gap-1 text-xs text-muted">
               <span className="inline-flex items-center gap-1.5">
-                <MapPin className="h-3.5 w-3.5 text-gold" /> {fullAddress(c.address)}
+                <MapPin className="h-3.5 w-3.5 text-gold" /> {companyLocation(c)}
               </span>
               <span className="inline-flex items-center gap-1.5">
                 <Clock className="h-3.5 w-3.5 text-gold" /> {c.payTerms}

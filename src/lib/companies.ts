@@ -38,13 +38,16 @@ export interface McCompany {
   status: "active" | "coming-soon";
   /** company email carriers should send certificates to */
   email?: string;
-  address: Address;
+  /** physical authority address — optional for nationwide dispatch-only services */
+  address?: Address;
+  /** short location label shown when there is no physical address (e.g. "Nationwide · 48 States") */
+  serviceArea?: string;
   /** headline shown on the company onboarding page */
   tagline: string;
   /** payment terms, e.g. "Payment in 24 to 48 hours" */
   payTerms: string;
-  /** who the COI must list as the certificate holder */
-  coiHolder: Address & { name: string };
+  /** who the COI must list as the certificate holder (optional) */
+  coiHolder?: Address & { name: string };
   /** optional insurance-limit / additional-insured requirements */
   coiRequirements?: string[];
   /** structured data we collect in addition to uploads */
@@ -58,6 +61,16 @@ export interface McCompany {
 
 export function fullAddress(a: Address) {
   return `${a.line1}, ${a.city}, ${a.state} ${a.zip}`;
+}
+
+/** Full location label — the physical address, or the service area for nationwide services. */
+export function companyLocation(c: McCompany): string {
+  return c.address ? fullAddress(c.address) : c.serviceArea || "United States · 48 States";
+}
+
+/** Short "City, ST" label — or the service area for nationwide services. */
+export function companyShortLocation(c: McCompany): string {
+  return c.address ? `${c.address.city}, ${c.address.state}` : c.serviceArea || "Nationwide";
 }
 
 /* ── Move Em Out — standard owner-operator document set ──────── */
@@ -96,6 +109,15 @@ const TULARE_TRUCKING_DOCS: RequiredDoc[] = [
     accept: "image/*",
   },
   { key: "vehicle_registration", label: "Vehicle Registration", help: "Current vehicle registration document.", required: true },
+];
+
+/* ── Leo Dispatch (carrier keeps their own MC) — dispatch-service docs ── */
+const LEO_DISPATCH_DOCS: RequiredDoc[] = [
+  { key: "mc_authority", label: "MC Authority Sheet", help: "Your active MC operating authority letter from the FMCSA.", required: true },
+  { key: "w9", label: "W-9 Form", help: "Completed and signed IRS W-9.", required: true },
+  { key: "coi", label: "Certificate of Insurance (COI)", help: "Current COI listing Leo Dispatch Inc as certificate holder.", required: true },
+  { key: "noa", label: "Notice of Assignment (NOA)", help: "From your factoring company, if you factor your invoices.", required: true },
+  { key: "void_check", label: "Voided Check", help: "A voided check — the bank account we'll use for payment.", required: true },
 ];
 
 export const mcCompanies: McCompany[] = [
@@ -157,6 +179,22 @@ export const mcCompanies: McCompany[] = [
     collectEld: true,
     collectBanking: true,
     documents: MOVE_EM_OUT_DOCS,
+  },
+  {
+    slug: "leo-dispatch-inc",
+    name: "Leo Dispatch Inc",
+    legalName: "LEO DISPATCH INC",
+    authorityType: "Dispatch Service",
+    status: "active",
+    email: "leodispatchinc@gmail.com",
+    serviceArea: "Nationwide · 48 States",
+    tagline:
+      "Already have your own MC authority? Keep it — we just run your dispatch, booking high-paying loads and handling the paperwork while you drive.",
+    payTerms: "Dispatch-only · keep your own MC",
+    collectTruck: true,
+    collectEld: false,
+    collectBanking: false,
+    documents: LEO_DISPATCH_DOCS,
   },
 ];
 

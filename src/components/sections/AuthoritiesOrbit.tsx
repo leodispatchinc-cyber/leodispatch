@@ -1,15 +1,16 @@
 "use client";
 
 import NextLink from "next/link";
-import { Truck, Boxes, Building2, ArrowRight, MapPin, Clock, FileText } from "lucide-react";
+import { Truck, Boxes, Building2, Headphones, ArrowRight, MapPin, Clock, FileText } from "lucide-react";
 import SectionHeading from "../ui/SectionHeading";
 import RadialOrbitalTimeline, { type OrbitalItem } from "../ui/RadialOrbitalTimeline";
-import { mcCompanies } from "@/lib/companies";
+import { mcCompanies, companyShortLocation } from "@/lib/companies";
 
 const iconBySlug: Record<string, React.ElementType> = {
   "move-em-out-llc": Truck,
   "tulare-trucking-llc": Boxes,
   "silver-arrow-logistics-llc": Building2,
+  "leo-dispatch-inc": Headphones,
 };
 
 const active = mcCompanies.filter((c) => c.status === "active");
@@ -19,7 +20,7 @@ const timelineData: OrbitalItem[] = active.map((c, i) => {
   return {
     id,
     title: c.name.replace(/\s+LLC$/, ""),
-    date: `${c.address.city}, ${c.address.state}`,
+    date: companyShortLocation(c),
     content: c.tagline,
     icon: iconBySlug[c.slug] ?? Truck,
     relatedIds: active.map((_, j) => j + 1).filter((rid) => rid !== id),
@@ -73,7 +74,7 @@ export default function AuthoritiesOrbit() {
                     <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-success" /> Onboarding Open
                   </span>
                   <span className="inline-flex shrink-0 items-center gap-1 text-[11px] text-muted">
-                    <MapPin className="h-3 w-3 text-gold" /> {c.address.city}, {c.address.state}
+                    <MapPin className="h-3 w-3 text-gold" /> {companyShortLocation(c)}
                   </span>
                 </div>
                 <div className="mt-3 flex items-center gap-3">

@@ -13,7 +13,7 @@ import {
   ClipboardList,
 } from "lucide-react";
 import PageHeader from "@/components/ui/PageHeader";
-import { mcCompanies, getCompany, fullAddress } from "@/lib/companies";
+import { mcCompanies, getCompany, companyLocation } from "@/lib/companies";
 import { getAgreement } from "@/lib/agreements";
 import AgreementSigner from "@/components/AgreementSigner";
 import { pageMetadata } from "@/lib/seo";
@@ -64,7 +64,7 @@ export default async function RequirementsPage({
         }
       >
         <span className="inline-flex items-center gap-1.5 rounded-full border border-line bg-surface-2 px-4 py-2 text-sm text-muted">
-          <MapPin className="h-4 w-4 text-gold" /> {fullAddress(c.address)}
+          <MapPin className="h-4 w-4 text-gold" /> {companyLocation(c)}
         </span>
         <span className="inline-flex items-center gap-1.5 rounded-full border border-gold/40 bg-yellow/5 px-4 py-2 text-sm font-semibold text-gold">
           <Clock className="h-4 w-4" /> {c.payTerms}
@@ -99,7 +99,7 @@ export default async function RequirementsPage({
             {/* Main: documents */}
             <div className="flex flex-col gap-5">
               {/* COI holder + insurance requirements */}
-              {c.coiHolder.name && (
+              {c.coiHolder && c.coiHolder.name && (
                 <div className="rounded-2xl border border-gold/40 bg-gradient-to-br from-yellow/[0.06] to-transparent p-6">
                   <div className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wide text-gold">
                     <ShieldCheck className="h-4 w-4" /> Certificate of Insurance — Holder

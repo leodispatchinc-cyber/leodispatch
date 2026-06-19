@@ -5,7 +5,7 @@ import { ArrowLeft, MapPin, Clock, Check, Phone, ShieldCheck, ClipboardList } fr
 import PageHeader from "@/components/ui/PageHeader";
 import OnboardingForm from "@/components/OnboardingForm";
 import AgreementSigner from "@/components/AgreementSigner";
-import { mcCompanies, getCompany, fullAddress } from "@/lib/companies";
+import { mcCompanies, getCompany, companyLocation } from "@/lib/companies";
 import { getAgreement } from "@/lib/agreements";
 import { site } from "@/lib/data";
 import { pageMetadata } from "@/lib/seo";
@@ -77,7 +77,7 @@ export default async function CompanyOnboardingPage({
         subtitle={c.tagline}
       >
         <span className="inline-flex items-center gap-1.5 rounded-full border border-line bg-surface-2 px-4 py-2 text-sm text-muted">
-          <MapPin className="h-4 w-4 text-gold" /> {fullAddress(c.address)}
+          <MapPin className="h-4 w-4 text-gold" /> {companyLocation(c)}
         </span>
         <span className="inline-flex items-center gap-1.5 rounded-full border border-gold/40 bg-yellow/5 px-4 py-2 text-sm font-semibold text-gold">
           <Clock className="h-4 w-4" /> {c.payTerms}
@@ -117,7 +117,7 @@ export default async function CompanyOnboardingPage({
               </ul>
             </div>
 
-            {c.coiHolder.name && (
+            {c.coiHolder && c.coiHolder.name && (
               <div className="rounded-2xl border border-gold/30 bg-yellow/[0.04] p-6">
                 <h3 className="text-xs font-semibold uppercase tracking-wide text-gold">
                   COI Certificate Holder

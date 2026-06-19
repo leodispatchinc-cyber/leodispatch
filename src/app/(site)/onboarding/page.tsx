@@ -2,7 +2,7 @@ import { pageMetadata } from "@/lib/seo";
 import Link from "next/link";
 import { ArrowRight, MapPin, Clock, Lock, FileText } from "lucide-react";
 import PageHeader from "@/components/ui/PageHeader";
-import { mcCompanies, fullAddress } from "@/lib/companies";
+import { mcCompanies, companyLocation } from "@/lib/companies";
 
 export const metadata = pageMetadata({
   title: "Carrier Onboarding — Leo Dispatch Inc",
@@ -37,7 +37,7 @@ export default function OnboardingIndex() {
                 {active ? (
                   <div className="mt-3 flex flex-col gap-1.5 text-sm text-muted">
                     <span className="inline-flex items-center gap-1.5">
-                      <MapPin className="h-4 w-4 text-gold" /> {fullAddress(c.address)}
+                      <MapPin className="h-4 w-4 text-gold" /> {companyLocation(c)}
                     </span>
                     <span className="inline-flex items-center gap-1.5">
                       <Clock className="h-4 w-4 text-gold" /> {c.payTerms}

@@ -91,7 +91,7 @@ export default async function OnboardingDetail({ params }: { params: Promise<{ i
       </div>
 
       {/* COI holder */}
-      {company?.coiHolder.name && (
+      {company?.coiHolder && company.coiHolder.name && (
         <div className="mt-5 rounded-2xl border border-gold/30 bg-yellow/[0.04] p-5">
           <div className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wide text-gold">
             <MapPin className="h-3.5 w-3.5" /> COI Certificate Holder (required)

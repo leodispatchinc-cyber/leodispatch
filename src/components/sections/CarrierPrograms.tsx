@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { motion } from "framer-motion";
 import { Check, ArrowRight, Star, MapPin, Clock, Lock } from "lucide-react";
-import { mcCompanies, fullAddress } from "@/lib/companies";
+import { mcCompanies, companyLocation } from "@/lib/companies";
 import SectionHeading from "../ui/SectionHeading";
 import ShaderBackground from "../ui/ShaderBackground";
 import { cn } from "@/lib/utils";
@@ -60,7 +60,7 @@ export default function CarrierPrograms() {
                 {active ? (
                   <div className="mt-2 flex flex-col gap-1 text-sm text-muted">
                     <span className="inline-flex items-center gap-1.5">
-                      <MapPin className="h-3.5 w-3.5 text-gold" /> {fullAddress(c.address)}
+                      <MapPin className="h-3.5 w-3.5 text-gold" /> {companyLocation(c)}
                     </span>
                     <span className="inline-flex items-center gap-1.5">
                       <Clock className="h-3.5 w-3.5 text-gold" /> {c.payTerms}
