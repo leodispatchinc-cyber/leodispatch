@@ -31,15 +31,6 @@ function fileFor(collection: string) {
   return path.join(DATA_DIR, `${collection}.json`);
 }
 
-async function collectionExists(collection: string): Promise<boolean> {
-  try {
-    await fs.access(fileFor(collection));
-    return true;
-  } catch {
-    return false;
-  }
-}
-
 async function readCollection<T>(collection: string): Promise<T[]> {
   try {
     const raw = await fs.readFile(fileFor(collection), "utf8");
@@ -261,18 +252,53 @@ export async function markConversationRead(id: string): Promise<void> {
 }
 
 /* ── Blog posts (CMS) ─────────────────────────────────────── */
-// On first ever access, initialize the store from the seed posts so the blog
-// is populated. Once the file exists (even if emptied), we never reseed.
+// Bump SEED_VERSION whenever the seed posts in lib/blog.ts change. On the next
+// request the store re-applies the seed — updating seed-managed posts to the
+// latest content (keeping their id + createdAt) while preserving any
+// admin-created posts — so content edits actually reach a deployed instance
+// that already has a persisted .data volume.
+const SEED_VERSION = "2026-06-18-1";
+
+interface BlogMeta {
+  seedVersion: string;
+}
+
+async function readBlogMeta(): Promise<BlogMeta> {
+  try {
+    const raw = await fs.readFile(fileFor("blog.meta"), "utf8");
+    const m = JSON.parse(raw);
+    return { seedVersion: typeof m?.seedVersion === "string" ? m.seedVersion : "" };
+  } catch {
+    return { seedVersion: "" };
+  }
+}
+
+async function writeBlogMeta(m: BlogMeta): Promise<void> {
+  await ensureDir(DATA_DIR);
+  await fs.writeFile(fileFor("blog.meta"), JSON.stringify(m, null, 2), "utf8");
+}
+
 async function ensureBlogSeeded(): Promise<void> {
-  if (await collectionExists("blog")) return;
+  const existing = await readCollection<BlogPost>("blog");
+  const meta = await readBlogMeta();
+  if (existing.length > 0 && meta.seedVersion === SEED_VERSION) return;
+
   const now = new Date().toISOString();
-  const rows: BlogPost[] = seedPosts.map((p) => ({
-    ...p,
-    id: newId(),
-    createdAt: now,
-    updatedAt: now,
-  }));
-  await writeCollection("blog", rows);
+  const seedSlugs = new Set(seedPosts.map((p) => p.slug));
+  // keep any admin-created posts (slugs that aren't part of the seed)
+  const adminPosts = existing.filter((p) => !seedSlugs.has(p.slug));
+  // (re)apply every seed post, preserving its existing id + createdAt if present
+  const seeded: BlogPost[] = seedPosts.map((p) => {
+    const prev = existing.find((e) => e.slug === p.slug);
+    return {
+      ...p,
+      id: prev?.id ?? newId(),
+      createdAt: prev?.createdAt ?? now,
+      updatedAt: now,
+    };
+  });
+  await writeCollection("blog", [...seeded, ...adminPosts]);
+  await writeBlogMeta({ seedVersion: SEED_VERSION });
 }
 
 function sortPosts(rows: BlogPost[]): BlogPost[] {
