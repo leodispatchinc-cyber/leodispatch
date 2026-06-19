@@ -1,58 +1,30 @@
 /* ============================================================
-   Local persistence — file-based store (server only)
+   Persistence layer — Vercel Postgres (data) + Vercel Blob (files)
    ------------------------------------------------------------
-   Makes onboarding / contact / application submissions land in
-   the admin dashboard WITHOUT requiring any external service.
-   Records live in   .data/<collection>.json
-   Uploaded files in .data/uploads/<submissionId>/<file>
+   Onboarding / contact / application / chat submissions and the
+   blog CMS live in Postgres. Uploaded documents and blog images
+   live in Vercel Blob (public, unguessable URLs).
 
-   ⚠️ Security note: this stores form data (incl. fields the
-   onboarding form marks sensitive, like ELD/bank details) as
-   plaintext on the local disk. It is fine for local/internal
-   use, but before exposing publicly you should: add auth to
-   /admin + /api/files, and move secrets to encrypted storage
-   (e.g. Supabase + a vault). The Supabase path in lib/leads.ts
-   remains available as a drop-in upgrade.
+   Env required (auto-set when you create the stores in Vercel):
+     POSTGRES_URL            — Vercel Postgres / Neon
+     BLOB_READ_WRITE_TOKEN   — Vercel Blob
+
+   Tables are created on first use (see lib/db.ts) — no migrate step.
    ============================================================ */
 
-import { promises as fs } from "fs";
-import path from "path";
 import crypto from "crypto";
-import { seedPosts, type BlogPost } from "./blog";
-
-const DATA_DIR = path.join(process.cwd(), ".data");
-const UPLOAD_DIR = path.join(DATA_DIR, "uploads");
-
-async function ensureDir(dir: string) {
-  await fs.mkdir(dir, { recursive: true });
-}
-
-function fileFor(collection: string) {
-  return path.join(DATA_DIR, `${collection}.json`);
-}
-
-async function readCollection<T>(collection: string): Promise<T[]> {
-  try {
-    const raw = await fs.readFile(fileFor(collection), "utf8");
-    const parsed = JSON.parse(raw);
-    return Array.isArray(parsed) ? (parsed as T[]) : [];
-  } catch {
-    return [];
-  }
-}
-
-async function writeCollection<T>(collection: string, rows: T[]) {
-  await ensureDir(DATA_DIR);
-  await fs.writeFile(fileFor(collection), JSON.stringify(rows, null, 2), "utf8");
-}
+import { put } from "@vercel/blob";
+import { sql, ensureSchema } from "./db";
+import { seedPosts, type BlogPost, type PostStatus } from "./blog";
 
 export interface StoredFile {
   key: string; // which document slot
   label: string; // human label
   originalName: string;
-  storedName: string; // on-disk name
+  storedName: string; // unique blob pathname (also the /api/files route key)
   size: number;
   type: string;
+  url: string; // public Blob URL
 }
 
 export interface OnboardingSubmission {
@@ -85,114 +57,142 @@ export function newId() {
   return crypto.randomUUID();
 }
 
-/* ── Uploads ──────────────────────────────────────────────── */
+/* ── Uploads (Vercel Blob) ────────────────────────────────── */
 export async function saveUpload(
   submissionId: string,
   key: string,
   label: string,
   file: File
 ): Promise<StoredFile> {
-  const dir = path.join(UPLOAD_DIR, submissionId);
-  await ensureDir(dir);
-  const safeBase = (file.name || `${key}`).replace(/[^a-zA-Z0-9._-]/g, "_").slice(-120);
-  // unique token keeps multiple files for the same field (e.g. truck pictures) from colliding
-  const uniq = crypto.randomUUID().slice(0, 8);
-  const storedName = `${key}__${uniq}__${safeBase}`;
-  const buf = Buffer.from(await file.arrayBuffer());
-  await fs.writeFile(path.join(dir, storedName), buf);
+  const safeBase = (file.name || key).replace(/[^a-zA-Z0-9._-]/g, "_").slice(-120);
+  // slash-free, unique token — also serves as the /api/files/[id]/[name] key
+  const storedName = `${key}__${crypto.randomUUID().slice(0, 8)}__${safeBase}`;
+  const blob = await put(`onboarding/${submissionId}/${storedName}`, file, {
+    access: "public",
+  });
   return {
     key,
     label,
-    originalName: file.name || storedName,
+    originalName: file.name || safeBase,
     storedName,
     size: file.size,
     type: file.type || "application/octet-stream",
+    url: blob.url,
   };
 }
 
-export async function readUpload(submissionId: string, storedName: string) {
-  // guard against path traversal
-  const safe = path.basename(storedName);
-  const full = path.join(UPLOAD_DIR, path.basename(submissionId), safe);
-  return fs.readFile(full);
-}
-
-/* ── Blog images (CMS) ────────────────────────────────────────
-   Editor-uploaded post images live on the persistent volume at
-   .data/uploads/blog/ and are served publicly via /api/blog-image. */
-const BLOG_IMG_DIR = path.join(UPLOAD_DIR, "blog");
-
-export async function saveBlogImage(file: File): Promise<{ name: string; url: string }> {
-  await ensureDir(BLOG_IMG_DIR);
+/** Editor-uploaded blog image → public Blob URL stored in the post markdown. */
+export async function saveBlogImage(file: File): Promise<{ url: string }> {
   const safeBase = (file.name || "image").replace(/[^a-zA-Z0-9._-]/g, "_").slice(-100);
-  const uniq = crypto.randomUUID().slice(0, 8);
-  const storedName = `${uniq}__${safeBase}`;
-  const buf = Buffer.from(await file.arrayBuffer());
-  await fs.writeFile(path.join(BLOG_IMG_DIR, storedName), buf);
-  return { name: storedName, url: `/api/blog-image/${storedName}` };
-}
-
-export async function readBlogImage(name: string): Promise<Buffer> {
-  // guard against path traversal — only ever read from the blog image dir
-  return fs.readFile(path.join(BLOG_IMG_DIR, path.basename(name)));
+  const blob = await put(`blog/${safeBase}`, file, {
+    access: "public",
+    addRandomSuffix: true,
+  });
+  return { url: blob.url };
 }
 
 /* ── Onboarding submissions ───────────────────────────────── */
+interface OnboardingRow {
+  id: string;
+  company_slug: string;
+  company_name: string;
+  status: OnboardingSubmission["status"];
+  created_at: string;
+  fields: Record<string, string>;
+  files: StoredFile[];
+}
+
+function rowToOnboarding(r: OnboardingRow): OnboardingSubmission {
+  return {
+    id: r.id,
+    companySlug: r.company_slug,
+    companyName: r.company_name,
+    status: r.status,
+    createdAt: r.created_at,
+    fields: r.fields || {},
+    files: Array.isArray(r.files) ? r.files : [],
+  };
+}
+
 export async function saveOnboarding(
   rec: Omit<OnboardingSubmission, "id" | "createdAt" | "status">
 ): Promise<OnboardingSubmission> {
-  const rows = await readCollection<OnboardingSubmission>("onboarding");
+  await ensureSchema();
   const full: OnboardingSubmission = {
     id: newId(),
     createdAt: new Date().toISOString(),
     status: "new",
     ...rec,
   };
-  rows.unshift(full);
-  await writeCollection("onboarding", rows);
+  await sql`INSERT INTO onboarding (id, company_slug, company_name, status, created_at, fields, files)
+    VALUES (${full.id}, ${full.companySlug}, ${full.companyName}, ${full.status}, ${full.createdAt},
+            ${JSON.stringify(full.fields)}::jsonb, ${JSON.stringify(full.files)}::jsonb)`;
   return full;
 }
 
 export async function listOnboarding(): Promise<OnboardingSubmission[]> {
-  return readCollection<OnboardingSubmission>("onboarding");
+  await ensureSchema();
+  const { rows } = await sql<OnboardingRow>`SELECT * FROM onboarding ORDER BY created_at DESC`;
+  return rows.map(rowToOnboarding);
 }
 
 export async function getOnboarding(id: string): Promise<OnboardingSubmission | undefined> {
-  const rows = await readCollection<OnboardingSubmission>("onboarding");
-  return rows.find((r) => r.id === id);
+  await ensureSchema();
+  const { rows } = await sql<OnboardingRow>`SELECT * FROM onboarding WHERE id = ${id} LIMIT 1`;
+  return rows[0] ? rowToOnboarding(rows[0]) : undefined;
 }
 
 export async function updateOnboarding(
   id: string,
   patch: Partial<OnboardingSubmission>
 ): Promise<OnboardingSubmission | undefined> {
-  const rows = await readCollection<OnboardingSubmission>("onboarding");
-  const idx = rows.findIndex((r) => r.id === id);
-  if (idx === -1) return undefined;
-  rows[idx] = { ...rows[idx], ...patch, id: rows[idx].id };
-  await writeCollection("onboarding", rows);
-  return rows[idx];
+  await ensureSchema();
+  const cur = await getOnboarding(id);
+  if (!cur) return undefined;
+  const next: OnboardingSubmission = { ...cur, ...patch, id: cur.id };
+  await sql`UPDATE onboarding SET
+    company_slug = ${next.companySlug},
+    company_name = ${next.companyName},
+    status = ${next.status},
+    fields = ${JSON.stringify(next.fields)}::jsonb,
+    files = ${JSON.stringify(next.files)}::jsonb
+    WHERE id = ${id}`;
+  return next;
 }
 
 /* ── Contact + applications ───────────────────────────────── */
 export async function saveContact(rec: Omit<ContactSubmission, "id" | "createdAt">) {
-  const rows = await readCollection<ContactSubmission>("contact");
-  rows.unshift({ id: newId(), createdAt: new Date().toISOString(), ...rec });
-  await writeCollection("contact", rows);
+  await ensureSchema();
+  await sql`INSERT INTO contact (id, created_at, name, email, phone, message)
+    VALUES (${newId()}, ${new Date().toISOString()}, ${rec.name}, ${rec.email}, ${rec.phone}, ${rec.message})`;
 }
 
 export async function listContact(): Promise<ContactSubmission[]> {
-  return readCollection<ContactSubmission>("contact");
+  await ensureSchema();
+  const { rows } = await sql<{
+    id: string; created_at: string; name: string; email: string; phone: string; message: string;
+  }>`SELECT * FROM contact ORDER BY created_at DESC`;
+  return rows.map((r) => ({
+    id: r.id,
+    createdAt: r.created_at,
+    name: r.name,
+    email: r.email,
+    phone: r.phone,
+    message: r.message,
+  }));
 }
 
 export async function saveApplication(rec: Omit<ApplicationSubmission, "id" | "createdAt">) {
-  const rows = await readCollection<ApplicationSubmission>("applications");
-  rows.unshift({ id: newId(), createdAt: new Date().toISOString(), ...rec });
-  await writeCollection("applications", rows);
+  await ensureSchema();
+  await sql`INSERT INTO applications (id, created_at, fields)
+    VALUES (${newId()}, ${new Date().toISOString()}, ${JSON.stringify(rec.fields)}::jsonb)`;
 }
 
 export async function listApplications(): Promise<ApplicationSubmission[]> {
-  return readCollection<ApplicationSubmission>("applications");
+  await ensureSchema();
+  const { rows } = await sql<{ id: string; created_at: string; fields: Record<string, string> }>`
+    SELECT * FROM applications ORDER BY created_at DESC`;
+  return rows.map((r) => ({ id: r.id, createdAt: r.created_at, fields: r.fields || {} }));
 }
 
 /* ── Live chat ────────────────────────────────────────────── */
@@ -214,17 +214,38 @@ export interface Conversation {
   adminUnread: number;
 }
 
-async function readChats(): Promise<Conversation[]> {
-  return readCollection<Conversation>("chats");
+interface ChatRow {
+  id: string;
+  name: string;
+  email: string;
+  created_at: string;
+  updated_at: string;
+  admin_unread: number;
+  messages: ChatMessage[];
+}
+
+function rowToConversation(r: ChatRow): Conversation {
+  return {
+    id: r.id,
+    name: r.name,
+    email: r.email,
+    createdAt: r.created_at,
+    updatedAt: r.updated_at,
+    messages: Array.isArray(r.messages) ? r.messages : [],
+    adminUnread: r.admin_unread || 0,
+  };
 }
 
 export async function listConversations(): Promise<Conversation[]> {
-  const rows = await readChats();
-  return rows.sort((a, b) => (a.updatedAt < b.updatedAt ? 1 : a.updatedAt > b.updatedAt ? -1 : 0));
+  await ensureSchema();
+  const { rows } = await sql<ChatRow>`SELECT * FROM chats ORDER BY updated_at DESC`;
+  return rows.map(rowToConversation);
 }
 
 export async function getConversation(id: string): Promise<Conversation | undefined> {
-  return (await readChats()).find((c) => c.id === id);
+  await ensureSchema();
+  const { rows } = await sql<ChatRow>`SELECT * FROM chats WHERE id = ${id} LIMIT 1`;
+  return rows[0] ? rowToConversation(rows[0]) : undefined;
 }
 
 export async function addVisitorMessage(
@@ -233,105 +254,155 @@ export async function addVisitorMessage(
   email: string,
   text: string
 ): Promise<Conversation> {
-  const rows = await readChats();
+  await ensureSchema();
   const now = new Date().toISOString();
   const msg: ChatMessage = { id: newId(), from: "visitor", text, at: now };
-  let conv = rows.find((c) => c.id === id);
-  if (!conv) {
-    conv = { id, name, email, createdAt: now, updatedAt: now, messages: [msg], adminUnread: 1 };
-    rows.unshift(conv);
-  } else {
-    if (name && !conv.name) conv.name = name;
-    if (email && !conv.email) conv.email = email;
-    conv.messages.push(msg);
-    conv.updatedAt = now;
-    conv.adminUnread += 1;
+  const existing = await getConversation(id);
+  if (!existing) {
+    const conv: Conversation = {
+      id, name, email, createdAt: now, updatedAt: now, messages: [msg], adminUnread: 1,
+    };
+    await sql`INSERT INTO chats (id, name, email, created_at, updated_at, admin_unread, messages)
+      VALUES (${id}, ${name}, ${email}, ${now}, ${now}, ${1}, ${JSON.stringify(conv.messages)}::jsonb)`;
+    return conv;
   }
-  await writeCollection("chats", rows);
+  const conv: Conversation = {
+    ...existing,
+    name: existing.name || name,
+    email: existing.email || email,
+    messages: [...existing.messages, msg],
+    updatedAt: now,
+    adminUnread: existing.adminUnread + 1,
+  };
+  await sql`UPDATE chats SET
+    name = ${conv.name}, email = ${conv.email}, updated_at = ${now},
+    admin_unread = ${conv.adminUnread}, messages = ${JSON.stringify(conv.messages)}::jsonb
+    WHERE id = ${id}`;
   return conv;
 }
 
 export async function addAdminMessage(id: string, text: string): Promise<Conversation | undefined> {
-  const rows = await readChats();
-  const conv = rows.find((c) => c.id === id);
-  if (!conv) return undefined;
+  await ensureSchema();
+  const existing = await getConversation(id);
+  if (!existing) return undefined;
   const now = new Date().toISOString();
-  conv.messages.push({ id: newId(), from: "admin", text, at: now });
-  conv.updatedAt = now;
-  await writeCollection("chats", rows);
+  const conv: Conversation = {
+    ...existing,
+    messages: [...existing.messages, { id: newId(), from: "admin", text, at: now }],
+    updatedAt: now,
+  };
+  await sql`UPDATE chats SET updated_at = ${now}, messages = ${JSON.stringify(conv.messages)}::jsonb
+    WHERE id = ${id}`;
   return conv;
 }
 
 export async function markConversationRead(id: string): Promise<void> {
-  const rows = await readChats();
-  const conv = rows.find((c) => c.id === id);
-  if (conv && conv.adminUnread !== 0) {
-    conv.adminUnread = 0;
-    await writeCollection("chats", rows);
-  }
+  await ensureSchema();
+  await sql`UPDATE chats SET admin_unread = 0 WHERE id = ${id}`;
 }
 
 /* ── Blog posts (CMS) ─────────────────────────────────────── */
 // Bump SEED_VERSION whenever the seed posts in lib/blog.ts change. On the next
 // request the store re-applies the seed — updating seed-managed posts to the
-// latest content (keeping their id + createdAt) while preserving any
-// admin-created posts — so content edits actually reach a deployed instance
-// that already has a persisted .data volume.
+// latest content (keeping their id + created_at) while preserving any
+// admin-created posts.
 const SEED_VERSION = "2026-06-18-1";
 
-interface BlogMeta {
-  seedVersion: string;
+interface PostRow {
+  id: string;
+  slug: string;
+  title: string;
+  category: string;
+  excerpt: string;
+  body: string;
+  cover_image: string;
+  author: string;
+  status: PostStatus;
+  featured: boolean;
+  published_at: string;
+  created_at: string;
+  updated_at: string;
+  meta_title: string;
+  meta_description: string;
+  keywords: string[];
+  og_image: string;
+  canonical_url: string;
+  noindex: boolean;
 }
 
-async function readBlogMeta(): Promise<BlogMeta> {
-  try {
-    const raw = await fs.readFile(fileFor("blog.meta"), "utf8");
-    const m = JSON.parse(raw);
-    return { seedVersion: typeof m?.seedVersion === "string" ? m.seedVersion : "" };
-  } catch {
-    return { seedVersion: "" };
-  }
+function rowToPost(r: PostRow): BlogPost {
+  return {
+    id: r.id,
+    slug: r.slug,
+    title: r.title,
+    category: r.category,
+    excerpt: r.excerpt,
+    body: r.body,
+    coverImage: r.cover_image,
+    author: r.author,
+    status: r.status,
+    featured: r.featured,
+    publishedAt: r.published_at,
+    createdAt: r.created_at,
+    updatedAt: r.updated_at,
+    metaTitle: r.meta_title,
+    metaDescription: r.meta_description,
+    keywords: Array.isArray(r.keywords) ? r.keywords : [],
+    ogImage: r.og_image,
+    canonicalUrl: r.canonical_url,
+    noindex: r.noindex,
+  };
 }
 
-async function writeBlogMeta(m: BlogMeta): Promise<void> {
-  await ensureDir(DATA_DIR);
-  await fs.writeFile(fileFor("blog.meta"), JSON.stringify(m, null, 2), "utf8");
+type PostContent = Omit<BlogPost, "id" | "createdAt" | "updatedAt">;
+
+/** Insert a post (new id + timestamps), upserting on slug. Used for seeding. */
+async function upsertSeedPost(p: PostContent, now: string): Promise<void> {
+  await sql`INSERT INTO blog_posts (
+    id, slug, title, category, excerpt, body, cover_image, author, status, featured,
+    published_at, created_at, updated_at, meta_title, meta_description, keywords,
+    og_image, canonical_url, noindex
+  ) VALUES (
+    ${newId()}, ${p.slug}, ${p.title}, ${p.category}, ${p.excerpt}, ${p.body}, ${p.coverImage},
+    ${p.author}, ${p.status}, ${p.featured}, ${p.publishedAt}, ${now}, ${now}, ${p.metaTitle},
+    ${p.metaDescription}, ${JSON.stringify(p.keywords)}::jsonb, ${p.ogImage}, ${p.canonicalUrl}, ${p.noindex}
+  )
+  ON CONFLICT (slug) DO UPDATE SET
+    title = EXCLUDED.title, category = EXCLUDED.category, excerpt = EXCLUDED.excerpt,
+    body = EXCLUDED.body, cover_image = EXCLUDED.cover_image, author = EXCLUDED.author,
+    status = EXCLUDED.status, featured = EXCLUDED.featured, published_at = EXCLUDED.published_at,
+    updated_at = EXCLUDED.updated_at, meta_title = EXCLUDED.meta_title,
+    meta_description = EXCLUDED.meta_description, keywords = EXCLUDED.keywords,
+    og_image = EXCLUDED.og_image, canonical_url = EXCLUDED.canonical_url, noindex = EXCLUDED.noindex`;
 }
+
+let seededThisInstance = false;
 
 async function ensureBlogSeeded(): Promise<void> {
-  const existing = await readCollection<BlogPost>("blog");
-  const meta = await readBlogMeta();
-  if (existing.length > 0 && meta.seedVersion === SEED_VERSION) return;
-
+  await ensureSchema();
+  if (seededThisInstance) return;
+  const [{ rows: metaRows }, { rows: countRows }] = await Promise.all([
+    sql<{ value: string }>`SELECT value FROM app_meta WHERE key = 'blog_seed_version' LIMIT 1`,
+    sql<{ n: number }>`SELECT count(*)::int AS n FROM blog_posts`,
+  ]);
+  const version = metaRows[0]?.value ?? "";
+  const count = countRows[0]?.n ?? 0;
+  if (count > 0 && version === SEED_VERSION) {
+    seededThisInstance = true;
+    return;
+  }
   const now = new Date().toISOString();
-  const seedSlugs = new Set(seedPosts.map((p) => p.slug));
-  // keep any admin-created posts (slugs that aren't part of the seed)
-  const adminPosts = existing.filter((p) => !seedSlugs.has(p.slug));
-  // (re)apply every seed post, preserving its existing id + createdAt if present
-  const seeded: BlogPost[] = seedPosts.map((p) => {
-    const prev = existing.find((e) => e.slug === p.slug);
-    return {
-      ...p,
-      id: prev?.id ?? newId(),
-      createdAt: prev?.createdAt ?? now,
-      updatedAt: now,
-    };
-  });
-  await writeCollection("blog", [...seeded, ...adminPosts]);
-  await writeBlogMeta({ seedVersion: SEED_VERSION });
-}
-
-function sortPosts(rows: BlogPost[]): BlogPost[] {
-  return [...rows].sort((a, b) => {
-    const da = a.publishedAt || a.createdAt;
-    const db = b.publishedAt || b.createdAt;
-    return da < db ? 1 : da > db ? -1 : 0;
-  });
+  for (const p of seedPosts) await upsertSeedPost(p as PostContent, now);
+  await sql`INSERT INTO app_meta (key, value) VALUES ('blog_seed_version', ${SEED_VERSION})
+    ON CONFLICT (key) DO UPDATE SET value = EXCLUDED.value`;
+  seededThisInstance = true;
 }
 
 export async function listAllPosts(): Promise<BlogPost[]> {
   await ensureBlogSeeded();
-  return sortPosts(await readCollection<BlogPost>("blog"));
+  const { rows } = await sql<PostRow>`SELECT * FROM blog_posts
+    ORDER BY COALESCE(NULLIF(published_at, ''), created_at) DESC`;
+  return rows.map(rowToPost);
 }
 
 export async function listPublishedPosts(): Promise<BlogPost[]> {
@@ -340,20 +411,22 @@ export async function listPublishedPosts(): Promise<BlogPost[]> {
 
 export async function getPostBySlug(slug: string): Promise<BlogPost | undefined> {
   await ensureBlogSeeded();
-  const rows = await readCollection<BlogPost>("blog");
-  return rows.find((p) => p.slug === slug);
+  const { rows } = await sql<PostRow>`SELECT * FROM blog_posts WHERE slug = ${slug} LIMIT 1`;
+  return rows[0] ? rowToPost(rows[0]) : undefined;
 }
 
 export async function getPostById(id: string): Promise<BlogPost | undefined> {
   await ensureBlogSeeded();
-  const rows = await readCollection<BlogPost>("blog");
-  return rows.find((p) => p.id === id);
+  const { rows } = await sql<PostRow>`SELECT * FROM blog_posts WHERE id = ${id} LIMIT 1`;
+  return rows[0] ? rowToPost(rows[0]) : undefined;
 }
 
 /** Ensure a slug is unique, ignoring the post being edited (ignoreId). */
 export async function uniqueSlug(desired: string, ignoreId?: string): Promise<string> {
-  const rows = await readCollection<BlogPost>("blog");
-  const taken = new Set(rows.filter((p) => p.id !== ignoreId).map((p) => p.slug));
+  await ensureSchema();
+  const { rows } = await sql<{ slug: string }>`SELECT slug FROM blog_posts
+    WHERE id <> ${ignoreId ?? ""}`;
+  const taken = new Set(rows.map((r) => r.slug));
   const base = desired || "post";
   if (!taken.has(base)) return base;
   let n = 2;
@@ -361,34 +434,40 @@ export async function uniqueSlug(desired: string, ignoreId?: string): Promise<st
   return `${base}-${n}`;
 }
 
-export async function createPost(
-  rec: Omit<BlogPost, "id" | "createdAt" | "updatedAt">
-): Promise<BlogPost> {
-  await ensureBlogSeeded();
-  const rows = await readCollection<BlogPost>("blog");
+export async function createPost(rec: PostContent): Promise<BlogPost> {
+  await ensureSchema();
   const now = new Date().toISOString();
   const full: BlogPost = { ...rec, id: newId(), createdAt: now, updatedAt: now };
-  rows.unshift(full);
-  await writeCollection("blog", rows);
+  await sql`INSERT INTO blog_posts (
+    id, slug, title, category, excerpt, body, cover_image, author, status, featured,
+    published_at, created_at, updated_at, meta_title, meta_description, keywords,
+    og_image, canonical_url, noindex
+  ) VALUES (
+    ${full.id}, ${full.slug}, ${full.title}, ${full.category}, ${full.excerpt}, ${full.body},
+    ${full.coverImage}, ${full.author}, ${full.status}, ${full.featured}, ${full.publishedAt},
+    ${full.createdAt}, ${full.updatedAt}, ${full.metaTitle}, ${full.metaDescription},
+    ${JSON.stringify(full.keywords)}::jsonb, ${full.ogImage}, ${full.canonicalUrl}, ${full.noindex}
+  )`;
   return full;
 }
 
-export async function updatePost(
-  id: string,
-  patch: Partial<BlogPost>
-): Promise<BlogPost | undefined> {
-  const rows = await readCollection<BlogPost>("blog");
-  const idx = rows.findIndex((p) => p.id === id);
-  if (idx === -1) return undefined;
-  rows[idx] = { ...rows[idx], ...patch, id: rows[idx].id, updatedAt: new Date().toISOString() };
-  await writeCollection("blog", rows);
-  return rows[idx];
+export async function updatePost(id: string, patch: Partial<BlogPost>): Promise<BlogPost | undefined> {
+  await ensureSchema();
+  const cur = await getPostById(id);
+  if (!cur) return undefined;
+  const next: BlogPost = { ...cur, ...patch, id: cur.id, updatedAt: new Date().toISOString() };
+  await sql`UPDATE blog_posts SET
+    slug = ${next.slug}, title = ${next.title}, category = ${next.category}, excerpt = ${next.excerpt},
+    body = ${next.body}, cover_image = ${next.coverImage}, author = ${next.author}, status = ${next.status},
+    featured = ${next.featured}, published_at = ${next.publishedAt}, updated_at = ${next.updatedAt},
+    meta_title = ${next.metaTitle}, meta_description = ${next.metaDescription},
+    keywords = ${JSON.stringify(next.keywords)}::jsonb, og_image = ${next.ogImage},
+    canonical_url = ${next.canonicalUrl}, noindex = ${next.noindex}
+    WHERE id = ${id}`;
+  return next;
 }
 
 export async function deletePost(id: string): Promise<void> {
-  const rows = await readCollection<BlogPost>("blog");
-  await writeCollection(
-    "blog",
-    rows.filter((p) => p.id !== id)
-  );
+  await ensureSchema();
+  await sql`DELETE FROM blog_posts WHERE id = ${id}`;
 }
