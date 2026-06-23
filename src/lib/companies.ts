@@ -116,8 +116,8 @@ const LEO_DISPATCH_DOCS: RequiredDoc[] = [
   { key: "mc_authority", label: "MC Authority Sheet", help: "Your active MC operating authority letter from the FMCSA.", required: true },
   { key: "w9", label: "W-9 Form", help: "Completed and signed IRS W-9.", required: true },
   { key: "coi", label: "Certificate of Insurance (COI)", help: "Current COI listing Leo Dispatch Inc as certificate holder.", required: true },
-  { key: "noa", label: "Notice of Assignment (NOA)", help: "From your factoring company, if you factor your invoices.", required: true },
-  { key: "void_check", label: "Voided Check", help: "A voided check — the bank account we'll use for payment.", required: true },
+  { key: "noa", label: "Notice of Assignment (NOA)", help: "Optional — from your factoring company, if you factor your invoices.", required: false },
+  { key: "void_check", label: "Voided Check", help: "Optional — a voided check for the bank account we'll use for payment.", required: false },
 ];
 
 export const mcCompanies: McCompany[] = [
