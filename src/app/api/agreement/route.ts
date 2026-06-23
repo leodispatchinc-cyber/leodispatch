@@ -3,6 +3,7 @@ import { saveOnboarding, saveUpload, updateOnboarding, type StoredFile } from "@
 import { getCompany } from "@/lib/companies";
 import { getAgreement } from "@/lib/agreements";
 import { notifyLead } from "@/lib/leads";
+import { emailShell, detailsTable, bulletList } from "@/lib/email";
 
 export const runtime = "nodejs";
 export const maxDuration = 60;
@@ -62,9 +63,17 @@ export async function POST(req: Request) {
 
     await notifyLead(
       `Signed agreement — ${signerName} → ${company.name}`,
-      `<h2>Signed Indemnity Agreement</h2>
-       <p><b>${signerName}</b>${email ? ` (${email})` : ""} signed the agreement for <b>${company.name}</b>.</p>
-       <p>Document: ${stored.originalName}</p>`
+      emailShell({
+        eyebrow: "Agreement",
+        title: "Signed indemnity agreement",
+        bodyHtml:
+          detailsTable([
+            ["Signer", signerName],
+            ["Email", email || undefined],
+            ["Authority", company.name],
+            ["Agreement", agreement.title],
+          ]) + bulletList("Document", [stored.originalName]),
+      })
     );
 
     return NextResponse.json({ ok: true, id: submission.id });

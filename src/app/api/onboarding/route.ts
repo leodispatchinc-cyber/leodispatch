@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { saveOnboarding, saveUpload, updateOnboarding, type StoredFile } from "@/lib/store";
 import { getCompany } from "@/lib/companies";
 import { notifyLead } from "@/lib/leads";
+import { emailShell, detailsTable, bulletList, labelize } from "@/lib/email";
 
 // Uploads can be sizeable — allow generous body parsing.
 export const runtime = "nodejs";
@@ -78,12 +79,20 @@ export async function POST(req: Request) {
 }
 
 function onboardingEmail(company: string, fields: Record<string, string>, files: StoredFile[]) {
-  const rows = Object.entries(fields)
-    .map(
-      ([k, v]) =>
-        `<tr><td style="padding:4px 12px;color:#888">${k}</td><td style="padding:4px 12px"><b>${v}</b></td></tr>`
-    )
-    .join("");
-  const docs = files.map((f) => `<li>${f.label} — ${f.originalName}</li>`).join("");
-  return `<h2>New onboarding for ${company}</h2><table>${rows}</table><h3>Documents</h3><ul>${docs}</ul>`;
+  const pairs: [string, string | undefined][] = Object.entries(fields).map(([k, v]) => [
+    labelize(k),
+    v,
+  ]);
+  let body = detailsTable(pairs);
+  if (files.length) {
+    body += bulletList(
+      "Documents uploaded",
+      files.map((f) => `${f.label} — ${f.originalName}`)
+    );
+  }
+  return emailShell({
+    eyebrow: "Onboarding",
+    title: `New onboarding — ${fields.driverName || "Carrier"} → ${company}`,
+    bodyHtml: body,
+  });
 }

@@ -7,6 +7,7 @@
    ============================================================ */
 
 import { isMailConfigured, sendMail } from "./mailer";
+import { emailShell, detailsTable, messageBlock, formatWhen } from "./email";
 
 /** Where submission notifications are sent. Overridable via env. */
 const NOTIFY_TO = process.env.LEAD_NOTIFY_EMAIL || "ghufranakram83@gmail.com";
@@ -96,9 +97,36 @@ export async function notifyLead(subject: string, html: string) {
   return { sent: false };
 }
 
+const LEAD_LABELS: Record<string, string> = {
+  name: "Name",
+  full_name: "Name",
+  email: "Email",
+  phone: "Phone",
+  company: "Company",
+  mc_number: "MC Number",
+  dot_number: "DOT Number",
+  equipment: "Equipment",
+  documents: "Documents",
+};
+
 export function leadToHtml(lead: Lead) {
-  const rows = Object.entries(lead)
-    .map(([k, v]) => `<tr><td style="padding:4px 12px;color:#888">${k}</td><td style="padding:4px 12px"><b>${String(v)}</b></td></tr>`)
-    .join("");
-  return `<h2>New ${lead.type}</h2><table>${rows}</table>`;
+  const isContact = lead.type === "contact";
+  const pairs: [string, string | undefined][] = [];
+  let message: string | undefined;
+  for (const [k, v] of Object.entries(lead)) {
+    if (k === "type" || k === "created_at") continue;
+    if (k === "message") {
+      message = String(v);
+      continue;
+    }
+    pairs.push([LEAD_LABELS[k] || k, v == null ? "" : String(v)]);
+  }
+  let body = detailsTable(pairs);
+  if (message) body += messageBlock("Message", message);
+  return emailShell({
+    eyebrow: isContact ? "Contact" : "Application",
+    title: isContact ? "New contact request" : "New carrier application",
+    subtitle: typeof lead.created_at === "string" ? `Received ${formatWhen(lead.created_at)}` : undefined,
+    bodyHtml: body,
+  });
 }

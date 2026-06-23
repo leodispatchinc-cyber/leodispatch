@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { addVisitorMessage, getConversation } from "@/lib/store";
 import { notifyLead } from "@/lib/leads";
+import { emailShell, detailsTable, messageBlock } from "@/lib/email";
 
 export const runtime = "nodejs";
 
@@ -24,11 +25,20 @@ export async function POST(req: Request) {
       text
     );
 
-    // notify on the first message of a conversation (no-op unless Resend is set)
+    // notify on the first message of a conversation (no-op unless email is set)
     if (conv.messages.filter((m) => m.from === "visitor").length === 1) {
+      const body =
+        detailsTable([
+          ["Name", conv.name || "Website visitor"],
+          ["Email", conv.email],
+        ]) + messageBlock("First message", text);
       await notifyLead(
         `New live chat — ${conv.name || "Website visitor"}`,
-        `<p>${conv.name || "A visitor"} started a chat:</p><blockquote>${text}</blockquote>`
+        emailShell({
+          eyebrow: "Live chat",
+          title: "New live chat started",
+          bodyHtml: body,
+        })
       );
     }
 
