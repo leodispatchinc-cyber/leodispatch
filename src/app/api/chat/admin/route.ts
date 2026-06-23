@@ -1,18 +1,27 @@
 import { NextResponse } from "next/server";
-import { listConversations, addAdminMessage, markConversationRead } from "@/lib/store";
+import {
+  listConversations,
+  addAdminMessage,
+  markConversationRead,
+  deleteConversation,
+} from "@/lib/store";
+import { isAuthenticated } from "@/lib/auth";
 
 export const runtime = "nodejs";
 
-/**
- * Admin chat console endpoint.
- * ⚠️ No auth yet — add admin authentication before exposing publicly.
- */
+/** Admin chat console endpoint — admin session required. */
 export async function GET() {
+  if (!(await isAuthenticated())) {
+    return NextResponse.json({ ok: false, error: "Unauthorized" }, { status: 401 });
+  }
   const conversations = await listConversations();
   return NextResponse.json({ ok: true, conversations });
 }
 
 export async function POST(req: Request) {
+  if (!(await isAuthenticated())) {
+    return NextResponse.json({ ok: false, error: "Unauthorized" }, { status: 401 });
+  }
   try {
     const body = await req.json();
     const id = String(body.conversationId ?? "").trim();
@@ -21,6 +30,11 @@ export async function POST(req: Request) {
     if (body.action === "read") {
       await markConversationRead(id);
       return NextResponse.json({ ok: true });
+    }
+
+    if (body.action === "delete") {
+      await deleteConversation(id);
+      return NextResponse.json({ ok: true, deleted: true });
     }
 
     const text = String(body.text ?? "").trim();

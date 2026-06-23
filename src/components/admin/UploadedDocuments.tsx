@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { FileText, Download, Eye, FolderOpen } from "lucide-react";
 import { listOnboarding } from "@/lib/store";
 import { mcCompanies } from "@/lib/companies";
@@ -83,7 +84,15 @@ export default async function UploadedDocuments() {
                       </div>
                     </div>
                   </td>
-                  <td className="px-5 py-3 text-muted">{d.driver}</td>
+                  <td className="px-5 py-3">
+                    <Link
+                      href={`/admin/onboarding/${d.submissionId}`}
+                      className="font-medium text-gold hover:underline"
+                      title="Open full submission"
+                    >
+                      {d.driver}
+                    </Link>
+                  </td>
                   <td className="px-5 py-3 text-muted">{d.companyName}</td>
                   <td className="px-5 py-3 text-muted">{formatBytes(d.size)}</td>
                   <td className="px-5 py-3 text-muted">{formatDateTime(d.createdAt)}</td>

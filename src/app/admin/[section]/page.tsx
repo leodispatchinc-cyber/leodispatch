@@ -4,6 +4,8 @@ import { MapPin, Clock, Mailbox, FileInput, FileText } from "lucide-react";
 import { sectionMeta, formatDateTime } from "@/lib/admin";
 import { mcCompanies, companyLocation } from "@/lib/companies";
 import { listContact, listApplications } from "@/lib/store";
+import ConfirmDeleteButton from "@/components/admin/ConfirmDeleteButton";
+import { deleteContactAction, deleteApplicationAction } from "@/app/admin/actions";
 import UploadedDocuments from "@/components/admin/UploadedDocuments";
 import DocumentVerification from "@/components/admin/DocumentVerification";
 import DispatchLeads from "@/components/admin/DispatchLeads";
@@ -128,6 +130,7 @@ async function ContactRequests() {
             <th className="px-5 py-3 font-medium">Phone</th>
             <th className="px-5 py-3 font-medium">Message</th>
             <th className="px-5 py-3 font-medium">Received</th>
+            <th className="px-5 py-3" />
           </tr>
         </thead>
         <tbody>
@@ -138,6 +141,12 @@ async function ContactRequests() {
               <td className="px-5 py-3 text-muted">{r.phone || "—"}</td>
               <td className="max-w-sm px-5 py-3 text-muted">{r.message || "—"}</td>
               <td className="px-5 py-3 text-muted">{formatDateTime(r.createdAt)}</td>
+              <td className="px-5 py-3 text-right">
+                <ConfirmDeleteButton
+                  action={deleteContactAction.bind(null, r.id)}
+                  confirmText={`Delete the contact message from ${r.name || r.email || "this person"}? This cannot be undone.`}
+                />
+              </td>
             </tr>
           ))}
         </tbody>
@@ -160,6 +169,7 @@ async function Applications() {
             <th className="px-5 py-3 font-medium">MC</th>
             <th className="px-5 py-3 font-medium">Equipment</th>
             <th className="px-5 py-3 font-medium">Received</th>
+            <th className="px-5 py-3" />
           </tr>
         </thead>
         <tbody>
@@ -171,6 +181,12 @@ async function Applications() {
               <td className="px-5 py-3 text-muted">{r.fields.mcNumber || "—"}</td>
               <td className="px-5 py-3 text-muted">{r.fields.equipment || "—"}</td>
               <td className="px-5 py-3 text-muted">{formatDateTime(r.createdAt)}</td>
+              <td className="px-5 py-3 text-right">
+                <ConfirmDeleteButton
+                  action={deleteApplicationAction.bind(null, r.id)}
+                  confirmText={`Delete the application from ${r.fields.fullName || r.fields.email || "this carrier"}? This cannot be undone.`}
+                />
+              </td>
             </tr>
           ))}
         </tbody>

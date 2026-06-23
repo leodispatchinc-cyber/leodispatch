@@ -13,7 +13,7 @@
    ============================================================ */
 
 import crypto from "crypto";
-import { put } from "@vercel/blob";
+import { put, del } from "@vercel/blob";
 import { sql, ensureSchema } from "./db";
 import { seedPosts, type BlogPost, type PostStatus } from "./blog";
 
@@ -142,6 +142,21 @@ export async function getOnboarding(id: string): Promise<OnboardingSubmission | 
   return rows[0] ? rowToOnboarding(rows[0]) : undefined;
 }
 
+/** Delete a submission and its uploaded files (from Blob), freeing storage. */
+export async function deleteOnboarding(id: string): Promise<void> {
+  await ensureSchema();
+  const sub = await getOnboarding(id);
+  const urls = (sub?.files || []).map((f) => f.url).filter(Boolean);
+  if (urls.length) {
+    try {
+      await del(urls);
+    } catch (e) {
+      console.error("[store] failed deleting onboarding blobs", e);
+    }
+  }
+  await sql`DELETE FROM onboarding WHERE id = ${id}`;
+}
+
 export async function updateOnboarding(
   id: string,
   patch: Partial<OnboardingSubmission>
@@ -167,6 +182,11 @@ export async function saveContact(rec: Omit<ContactSubmission, "id" | "createdAt
     VALUES (${newId()}, ${new Date().toISOString()}, ${rec.name}, ${rec.email}, ${rec.phone}, ${rec.message})`;
 }
 
+export async function deleteContact(id: string): Promise<void> {
+  await ensureSchema();
+  await sql`DELETE FROM contact WHERE id = ${id}`;
+}
+
 export async function listContact(): Promise<ContactSubmission[]> {
   await ensureSchema();
   const { rows } = await sql<{
@@ -186,6 +206,11 @@ export async function saveApplication(rec: Omit<ApplicationSubmission, "id" | "c
   await ensureSchema();
   await sql`INSERT INTO applications (id, created_at, fields)
     VALUES (${newId()}, ${new Date().toISOString()}, ${JSON.stringify(rec.fields)}::jsonb)`;
+}
+
+export async function deleteApplication(id: string): Promise<void> {
+  await ensureSchema();
+  await sql`DELETE FROM applications WHERE id = ${id}`;
 }
 
 export async function listApplications(): Promise<ApplicationSubmission[]> {
@@ -299,6 +324,11 @@ export async function addAdminMessage(id: string, text: string): Promise<Convers
 export async function markConversationRead(id: string): Promise<void> {
   await ensureSchema();
   await sql`UPDATE chats SET admin_unread = 0 WHERE id = ${id}`;
+}
+
+export async function deleteConversation(id: string): Promise<void> {
+  await ensureSchema();
+  await sql`DELETE FROM chats WHERE id = ${id}`;
 }
 
 /* ── Blog posts (CMS) ─────────────────────────────────────── */

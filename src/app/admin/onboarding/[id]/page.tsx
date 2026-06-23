@@ -5,6 +5,8 @@ import { getOnboarding } from "@/lib/store";
 import { getCompany, fullAddress } from "@/lib/companies";
 import { statusBadge, formatDateTime, prettyField } from "@/lib/admin";
 import StatusActions from "@/components/admin/StatusActions";
+import ConfirmDeleteButton from "@/components/admin/ConfirmDeleteButton";
+import { deleteOnboardingAction } from "@/app/admin/actions";
 
 export const dynamic = "force-dynamic";
 
@@ -142,6 +144,24 @@ export default async function OnboardingDetail({ params }: { params: Promise<{ i
             ))}
           </ul>
         )}
+      </div>
+
+      {/* Danger zone */}
+      <div className="mt-6 flex flex-wrap items-center justify-between gap-4 rounded-2xl border border-red-500/25 bg-red-500/[0.03] p-5">
+        <div>
+          <div className="text-sm font-semibold text-paper">Delete this submission</div>
+          <div className="mt-0.5 text-xs text-muted">
+            Permanently removes the record and its {sub.files.length} uploaded file
+            {sub.files.length === 1 ? "" : "s"} from storage. This cannot be undone.
+          </div>
+        </div>
+        <ConfirmDeleteButton
+          action={deleteOnboardingAction.bind(null, sub.id)}
+          label="Delete submission"
+          confirmText={`Permanently delete ${
+            sub.fields.driverName || "this submission"
+          } and all uploaded files? This cannot be undone.`}
+        />
       </div>
     </div>
   );

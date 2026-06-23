@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useRef, useState } from "react";
-import { MessageCircle, Send, ArrowLeft, Loader2, User } from "lucide-react";
+import { MessageCircle, Send, ArrowLeft, Loader2, User, Trash2 } from "lucide-react";
 
 interface Msg {
   id: string;
@@ -76,6 +76,21 @@ export default function AdminChat() {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ conversationId: id, action: "read" }),
+      });
+    } catch {
+      /* ignore */
+    }
+  }
+
+  async function deleteConversation(id: string) {
+    if (!confirm("Delete this entire conversation? This cannot be undone.")) return;
+    setConvos((cs) => cs.filter((c) => c.id !== id));
+    if (activeId === id) setActiveId(null);
+    try {
+      await fetch("/api/chat/admin", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ conversationId: id, action: "delete" }),
       });
     } catch {
       /* ignore */
@@ -194,6 +209,14 @@ export default function AdminChat() {
                 <div className="truncate text-sm font-bold text-paper">{active.name || "Website visitor"}</div>
                 <div className="truncate text-xs text-muted">{active.email || "No email provided"}</div>
               </div>
+              <button
+                onClick={() => deleteConversation(active.id)}
+                className="ml-auto grid h-8 w-8 shrink-0 place-items-center rounded-lg text-muted transition-colors hover:bg-red-500/10 hover:text-red-400"
+                aria-label="Delete conversation"
+                title="Delete conversation"
+              >
+                <Trash2 className="h-4 w-4" />
+              </button>
             </div>
 
             {/* Messages */}
