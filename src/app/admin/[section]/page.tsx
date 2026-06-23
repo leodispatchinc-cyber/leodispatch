@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { MapPin, Clock, Mailbox, FileInput } from "lucide-react";
+import { MapPin, Clock, Mailbox, FileInput, FileText } from "lucide-react";
 import { sectionMeta, formatDateTime } from "@/lib/admin";
 import { mcCompanies, companyLocation } from "@/lib/companies";
 import { listContact, listApplications } from "@/lib/store";
@@ -80,11 +80,27 @@ function McCompanies() {
               </span>
             </div>
           )}
-          <div className="mt-4 space-y-2">
+          <div className="mt-4 space-y-1.5">
+            <div className="text-[11px] font-semibold uppercase tracking-wide text-muted">
+              Required documents
+            </div>
             {c.documents.map((d) => (
-              <label key={d.key} className="flex items-center gap-2 rounded-lg border border-line bg-ink px-3 py-2 text-sm">
-                <input type="checkbox" defaultChecked className="accent-yellow" /> {d.label}
-              </label>
+              <div
+                key={d.key}
+                className="flex items-center justify-between gap-2 rounded-lg border border-line bg-ink px-3 py-2 text-sm"
+              >
+                <span className="inline-flex min-w-0 items-center gap-2 text-paper/90">
+                  <FileText className="h-3.5 w-3.5 shrink-0 text-gold" />
+                  <span className="truncate">{d.label}</span>
+                </span>
+                <span
+                  className={`shrink-0 text-[10px] font-semibold uppercase ${
+                    d.required ? "text-gold" : "text-muted"
+                  }`}
+                >
+                  {d.required ? "Required" : "Optional"}
+                </span>
+              </div>
             ))}
           </div>
           <Link

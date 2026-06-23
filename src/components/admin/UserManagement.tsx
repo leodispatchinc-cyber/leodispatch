@@ -32,34 +32,18 @@ const ROLES = [
 
 const allAuthorities = mcCompanies.map((c) => c.name).join(", ");
 
-const TEAM = [
-  {
-    name: "Leo",
-    email: "admin@leodispatchinc.com",
+export default function UserManagement() {
+  // The dashboard uses a single secure admin sign-in configured via env vars.
+  const admin = {
+    name: "Administrator",
+    email: process.env.ADMIN_NOTIFY_EMAIL || "admin@leodispatchinc.com",
+    username: process.env.ADMIN_USERNAME || "admin",
     role: "Super Admin",
     authorities: allAuthorities,
-    initials: "L",
-    status: "active" as const,
-  },
-  {
-    name: "Dispatch Desk",
-    email: "dispatch@leodispatchinc.com",
-    role: "Dispatcher",
-    authorities: [mcCompanies[0]?.name, mcCompanies[2]?.name].filter(Boolean).join(", "),
-    initials: "DD",
-    status: "active" as const,
-  },
-  {
-    name: "Docs Team",
-    email: "docs@leodispatchinc.com",
-    role: "Document Verifier",
-    authorities: mcCompanies[1]?.name ?? "—",
-    initials: "DT",
-    status: "active" as const,
-  },
-];
+    initials: "A",
+  };
+  const TEAM = [admin];
 
-export default function UserManagement() {
   return (
     <div className="mt-6 space-y-8">
       {/* Team table */}
@@ -84,6 +68,7 @@ export default function UserManagement() {
                     <div>
                       <div className="font-medium text-paper">{u.name}</div>
                       <div className="text-xs text-muted">{u.email}</div>
+                      <div className="text-[11px] text-muted/70">Login: {u.username}</div>
                     </div>
                   </div>
                 </td>
@@ -126,9 +111,10 @@ export default function UserManagement() {
       </div>
 
       <p className="flex items-center gap-2 rounded-xl border border-dashed border-line bg-surface px-4 py-3 text-xs text-muted">
-        <UserCog className="h-4 w-4 text-gold" />
-        Team is seeded for now. Add Supabase Auth keys in <code className="text-paper">.env.local</code> to invite
-        real users, enforce these roles and protect <code className="text-paper">/admin</code>.
+        <UserCog className="h-4 w-4 shrink-0 text-gold" />
+        This dashboard uses a single secure admin sign-in, configured with the{" "}
+        <code className="text-paper">ADMIN_USERNAME</code> / <code className="text-paper">ADMIN_PASSWORD</code>{" "}
+        environment variables. The roles above describe the access model for when more team members are added.
       </p>
     </div>
   );

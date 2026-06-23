@@ -120,7 +120,7 @@ export const sensitiveFields = new Set(["eldPassword", "accountNumber", "routing
 export const sectionMeta: Record<string, { title: string; desc: string }> = {
   applications: { title: "Applications", desc: "Review and process new carrier applications." },
   "document-verification": { title: "Document Verification", desc: "Verify uploaded MC, insurance, W9 and licensing documents." },
-  "mc-companies": { title: "MC Companies", desc: "Manage carrier programs and required document checklists — edits go live instantly." },
+  "mc-companies": { title: "MC Companies", desc: "Your MC authorities and the documents each one requires during onboarding." },
   "dispatch-leads": { title: "Dispatch Leads", desc: "Inbound dispatch leads from the site and campaigns." },
   "owner-operators": { title: "Owner Operators", desc: "Active owner-operators, equipment and assigned dispatchers." },
   "uploaded-documents": { title: "Uploaded Documents", desc: "All documents uploaded through the onboarding portal." },
