@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Inter, Archivo } from "next/font/google";
+import Script from "next/script";
 import "./globals.css";
 import { SITE_URL } from "@/lib/site";
 import { OG_IMAGE } from "@/lib/seo";
@@ -57,6 +58,21 @@ export default function RootLayout({
 }: Readonly<{ children: React.ReactNode }>) {
   return (
     <html lang="en" className={`${inter.variable} ${archivo.variable}`}>
+      <head>
+        {/* Google tag (gtag.js) — Google Ads */}
+        <Script
+          src="https://www.googletagmanager.com/gtag/js?id=AW-18273366324"
+          strategy="afterInteractive"
+        />
+        <Script id="google-ads" strategy="afterInteractive">
+          {`
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+            gtag('config', 'AW-18273366324');
+          `}
+        </Script>
+      </head>
       <body className="bg-ink text-paper antialiased">
         {children}
       </body>
