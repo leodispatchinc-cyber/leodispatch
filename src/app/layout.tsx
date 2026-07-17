@@ -58,7 +58,7 @@ export default function RootLayout({
   return (
     <html lang="en" className={`${inter.variable} ${archivo.variable}`}>
       <head>
-        {/* Google tag (gtag.js) — Google Ads (AW-18273366324) */}
+        {/* Google tag (gtag.js) — Google Ads & Google Analytics */}
         <script
           async
           src="https://www.googletagmanager.com/gtag/js?id=AW-18273366324"
@@ -68,7 +68,8 @@ export default function RootLayout({
             __html: `window.dataLayer = window.dataLayer || [];
 function gtag(){dataLayer.push(arguments);}
 gtag('js', new Date());
-gtag('config', 'AW-18273366324');`,
+gtag('config', 'AW-18273366324');
+${process.env.NEXT_PUBLIC_GA_ID ? `gtag('config', '${process.env.NEXT_PUBLIC_GA_ID}');` : ""}`,
           }}
         />
       </head>

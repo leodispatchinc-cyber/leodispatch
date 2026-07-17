@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 import type { Metadata } from "next";
 import { ArrowUpRight, Search, Clock, Newspaper, Calendar } from "lucide-react";
 import { listPublishedPosts } from "@/lib/store";
@@ -137,11 +138,13 @@ function FeaturedCard({ post }: { post: BlogPost }) {
     >
       <div className="relative aspect-[16/10] overflow-hidden lg:aspect-auto">
         {post.coverImage ? (
-          // eslint-disable-next-line @next/next/no-img-element
-          <img
+          <Image
             src={post.coverImage}
             alt={post.title}
-            className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
+            fill
+            sizes="(min-width: 1024px) 50vw, 100vw"
+            priority
+            className="object-cover transition-transform duration-500 group-hover:scale-105"
           />
         ) : (
           <CoverFallback category={post.category} />
@@ -180,12 +183,12 @@ function PostCard({ post }: { post: BlogPost }) {
     >
       <div className="relative aspect-[16/10] overflow-hidden">
         {post.coverImage ? (
-          // eslint-disable-next-line @next/next/no-img-element
-          <img
+          <Image
             src={post.coverImage}
             alt={post.title}
-            loading="lazy"
-            className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
+            fill
+            sizes="(min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw"
+            className="object-cover transition-transform duration-500 group-hover:scale-105"
           />
         ) : (
           <CoverFallback category={post.category} />

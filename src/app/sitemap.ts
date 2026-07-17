@@ -1,6 +1,7 @@
 import type { MetadataRoute } from "next";
 import { listPublishedPosts } from "@/lib/store";
 import { mcCompanies } from "@/lib/companies";
+import { dispatchStates } from "@/lib/states";
 import { SITE_URL } from "@/lib/site";
 
 export const dynamic = "force-dynamic";
@@ -15,6 +16,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     "/contact",
     "/blog",
     "/onboarding",
+    "/dispatch",
     "/privacy",
     "/terms",
   ];
@@ -39,6 +41,12 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     },
   ]);
 
+  const stateEntries: MetadataRoute.Sitemap = dispatchStates.map((s) => ({
+    url: `${SITE_URL}/dispatch/${s.slug}`,
+    changeFrequency: "monthly",
+    priority: 0.7,
+  }));
+
   const posts = await listPublishedPosts();
   const postEntries: MetadataRoute.Sitemap = posts.map((post) => ({
     url: `${SITE_URL}/blog/${post.slug}`,
@@ -47,5 +55,5 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     priority: 0.6,
   }));
 
-  return [...staticEntries, ...companyEntries, ...postEntries];
+  return [...staticEntries, ...companyEntries, ...stateEntries, ...postEntries];
 }

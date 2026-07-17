@@ -7,7 +7,7 @@ export default function Footer() {
   return (
     <footer className="border-t border-line bg-ink">
       <div className="container-x pb-24 pt-16">
-        <div className="grid grid-cols-2 gap-x-8 gap-y-10 lg:grid-cols-[1.5fr_repeat(4,1fr)] lg:gap-10">
+        <div className="grid grid-cols-2 gap-x-8 gap-y-10 lg:grid-cols-[1.3fr_repeat(5,1fr)] lg:gap-8">
           <div className="col-span-2 lg:col-span-1 lg:pr-6">
             <Link href="/" className="flex items-center">
               <LeoLogo className="h-14" />

@@ -196,4 +196,17 @@ export const footerColumns: { title: string; links: { label: string; href: strin
       { label: "Apply Now", href: "/onboarding" },
     ],
   },
+  {
+    title: "Service Areas",
+    links: [
+      { label: "Texas", href: "/dispatch/texas" },
+      { label: "California", href: "/dispatch/california" },
+      { label: "Georgia", href: "/dispatch/georgia" },
+      { label: "Illinois", href: "/dispatch/illinois" },
+      { label: "Florida", href: "/dispatch/florida" },
+      { label: "Ohio", href: "/dispatch/ohio" },
+      { label: "Pennsylvania", href: "/dispatch/pennsylvania" },
+      { label: "North Carolina", href: "/dispatch/north-carolina" },
+    ],
+  },
 ];

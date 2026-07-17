@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { ArrowUpRight, Clock, Calendar, ChevronRight, User } from "lucide-react";
@@ -118,12 +119,16 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
         {/* Cover */}
         {post.coverImage && (
           <div className="container-x mt-8 max-w-4xl">
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img
-              src={post.coverImage}
-              alt={post.title}
-              className="aspect-[16/8] w-full rounded-3xl border border-line object-cover"
-            />
+            <div className="relative aspect-[16/8] w-full overflow-hidden rounded-3xl border border-line">
+              <Image
+                src={post.coverImage}
+                alt={post.title}
+                fill
+                sizes="(min-width: 1024px) 768px, 100vw"
+                priority
+                className="object-cover"
+              />
+            </div>
           </div>
         )}
 
@@ -183,8 +188,13 @@ function RelatedCard({ post }: { post: BlogPost }) {
     >
       <div className="relative aspect-[16/10] overflow-hidden">
         {post.coverImage ? (
-          // eslint-disable-next-line @next/next/no-img-element
-          <img src={post.coverImage} alt={post.title} loading="lazy" className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105" />
+          <Image
+            src={post.coverImage}
+            alt={post.title}
+            fill
+            sizes="(min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw"
+            className="object-cover transition-transform duration-500 group-hover:scale-105"
+          />
         ) : (
           <div className="grid h-full w-full place-items-center bg-gradient-to-br from-surface-2 via-surface to-ink">
             <span className="text-xs font-semibold uppercase tracking-[0.2em] text-gold/70">{post.category}</span>

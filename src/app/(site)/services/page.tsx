@@ -8,7 +8,7 @@ import RevenueCalculator from "@/components/sections/RevenueCalculator";
 import FAQ from "@/components/sections/FAQ";
 import ContactCTA from "@/components/sections/ContactCTA";
 import JsonLd from "@/components/seo/JsonLd";
-import { faqPageLd, pageMetadata } from "@/lib/seo";
+import { faqPageLd, dispatchServiceLd, pageMetadata } from "@/lib/seo";
 
 export const metadata = pageMetadata({
   title: "Dispatch Services — Leo Dispatch Inc",
@@ -20,7 +20,7 @@ export const metadata = pageMetadata({
 export default function ServicesPage() {
   return (
     <>
-      <JsonLd data={faqPageLd} />
+      <JsonLd data={[faqPageLd, dispatchServiceLd]} />
       <PageHeader
         eyebrow="What We Do"
         title={<>Full-Service <span className="text-gradient-gold">Truck Dispatch</span></>}
