@@ -1,6 +1,7 @@
 import PageHeader from "@/components/ui/PageHeader";
 import { site } from "@/lib/data";
-import { pageMetadata } from "@/lib/seo";
+import { pageMetadata, breadcrumbLd } from "@/lib/seo";
+import JsonLd from "@/components/seo/JsonLd";
 
 export const metadata = pageMetadata({
   title: "Terms of Service — Leo Dispatch Inc",
@@ -24,6 +25,14 @@ function LI({ children }: { children: React.ReactNode }) {
 export default function TermsPage() {
   return (
     <>
+      <JsonLd
+        data={[
+          breadcrumbLd([
+            { name: "Home", path: "/" },
+            { name: "Terms of Service", path: "/terms" },
+          ]),
+        ]}
+      />
       <PageHeader
         eyebrow="Legal"
         title={<>Terms of <span className="text-gradient-gold">Service</span></>}

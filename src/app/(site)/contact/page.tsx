@@ -1,8 +1,9 @@
-import { pageMetadata } from "@/lib/seo";
+import { pageMetadata, breadcrumbLd } from "@/lib/seo";
 import { Phone, Mail, Clock, MapPin } from "lucide-react";
 import PageHeader from "@/components/ui/PageHeader";
 import ContactForm from "@/components/ContactForm";
 import { site } from "@/lib/data";
+import JsonLd from "@/components/seo/JsonLd";
 
 export const metadata = pageMetadata({
   title: "Contact Leo Dispatch Inc — Talk to a Dispatcher 24/7",
@@ -21,6 +22,14 @@ const channels = [
 export default function ContactPage() {
   return (
     <>
+      <JsonLd
+        data={[
+          breadcrumbLd([
+            { name: "Home", path: "/" },
+            { name: "Contact Us", path: "/contact" },
+          ]),
+        ]}
+      />
       <PageHeader
         eyebrow="Get In Touch"
         title={<>Talk To A <span className="text-gradient-gold">Dispatcher</span></>}

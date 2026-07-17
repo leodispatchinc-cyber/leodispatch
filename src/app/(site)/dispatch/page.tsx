@@ -1,8 +1,9 @@
+import { pageMetadata, breadcrumbLd } from "@/lib/seo";
 import Link from "next/link";
 import { ArrowRight, MapPin } from "lucide-react";
 import PageHeader from "@/components/ui/PageHeader";
 import { dispatchStates } from "@/lib/states";
-import { pageMetadata } from "@/lib/seo";
+import JsonLd from "@/components/seo/JsonLd";
 
 export const metadata = pageMetadata({
   title: "Truck Dispatch Service Areas — Leo Dispatch Inc",
@@ -14,6 +15,14 @@ export const metadata = pageMetadata({
 export default function DispatchIndex() {
   return (
     <>
+      <JsonLd
+        data={[
+          breadcrumbLd([
+            { name: "Home", path: "/" },
+            { name: "Service Areas", path: "/dispatch" },
+          ]),
+        ]}
+      />
       <PageHeader
         eyebrow="Service Areas"
         title={

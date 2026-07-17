@@ -1,10 +1,11 @@
-import { pageMetadata } from "@/lib/seo";
+import { pageMetadata, breadcrumbLd } from "@/lib/seo";
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 import PageHeader from "@/components/ui/PageHeader";
 import TruckTypes from "@/components/sections/TruckTypes";
 import RevenueCalculator from "@/components/sections/RevenueCalculator";
 import ContactCTA from "@/components/sections/ContactCTA";
+import JsonLd from "@/components/seo/JsonLd";
 
 export const metadata = pageMetadata({
   title: "Equipment We Dispatch — Leo Dispatch Inc",
@@ -16,6 +17,14 @@ export const metadata = pageMetadata({
 export default function EquipmentPage() {
   return (
     <>
+      <JsonLd
+        data={[
+          breadcrumbLd([
+            { name: "Home", path: "/" },
+            { name: "Equipment", path: "/equipment" },
+          ]),
+        ]}
+      />
       <PageHeader
         eyebrow="Equipment"
         title={<>Every Truck. <span className="text-gradient-gold">Every Lane.</span></>}

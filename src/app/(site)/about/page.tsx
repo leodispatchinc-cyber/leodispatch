@@ -1,4 +1,4 @@
-import { pageMetadata } from "@/lib/seo";
+import { pageMetadata, breadcrumbLd } from "@/lib/seo";
 import { Target, Shield, HeartHandshake, TrendingUp } from "lucide-react";
 import PageHeader from "@/components/ui/PageHeader";
 import Reveal from "@/components/ui/Reveal";
@@ -6,6 +6,7 @@ import TrustedBy from "@/components/sections/TrustedBy";
 import SuccessStories from "@/components/sections/SuccessStories";
 import ContactCTA from "@/components/sections/ContactCTA";
 import { heroStats } from "@/lib/data";
+import JsonLd from "@/components/seo/JsonLd";
 
 export const metadata = pageMetadata({
   title: "About Leo Dispatch Inc — Dispatch Built for Owner-Operators",
@@ -40,6 +41,14 @@ const values = [
 export default function AboutPage() {
   return (
     <>
+      <JsonLd
+        data={[
+          breadcrumbLd([
+            { name: "Home", path: "/" },
+            { name: "About Us", path: "/about" },
+          ]),
+        ]}
+      />
       <PageHeader
         eyebrow="Who We Are"
         title={<>We Find The Loads. <span className="text-gradient-gold">You Drive.</span></>}
